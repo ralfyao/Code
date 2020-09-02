@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var action = TempData["action"] ;
+    int i = 0;
+}
+@model IEnumerable<LTCareRate.Models.ViewModel.LatestNews>
+<form id="form1" runat="server">
+    <div class="row justify-content-lg-between justify-content-xx-center">
+        <div class="col-xl-3 col-lg-3 col-md-11 pr-xl-5 pr-lg-0 mb-4">
+            <div class="row">
+                <div class="col-lg-12">
+                    <a class="media w-100 flex-wrap icon-link-set" href="#0">
+                        <span class="sprite size--60">
+                            <!--這裡放圖片，60px * 60px-->
+                            <img src="images/spearker-1.png" alt="">
+                        </span>
+                        <h6 class="align-self-center">
+                            訊息公告
+                        </h6>
+                    </a>
+                </div><!--12-->
+            </div><!--row-->
+        </div><!--col3-->
+        <div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
+            <div class="gw page-title ">
+                <h2 class="h4 font-weight-bold">訊息公告</h2>
+            </div><!--gw-->
+            <div class="gw px-lg-5 tables-wrap px-xl-5  py-xl-5 py-lg-4">
+                @foreach (var obj in Model)
+                {
+                    <dl class="media w-100 flex-wrap tables">
+                        <dt class="cols">
+                            <div class="col-12">
+                                <div class="tables-row">
+                                    <span>序號</span>
+                                    <div>@obj.MsgSerialNo</div>
+                                </div>
+                            </div>
+                        </dt>
+                        <dd class="cols">
+                            <ul class="d-flex justify-content-lg-between justify-content-xx-end">
+                                <li class="col-xl-9 col-lg-7 col-md-12">
+                                    <div class="tables-row">
+                                        <span>標題</span>
+                                        <div>
+                                            <a href="javascript:void(0)" onclick="window.open('@Url.Action("Index", "LatestNews", new { MsgSerialNo = obj.MsgSerialNo })', '', 'width=700,height=500');">
+                                                @obj.MsgSub
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="col-xl-1 col-lg-2 col-md-2 col-sm-3 col-xx-4">
+                                    <div class="tables-row">
+                                        <span>附件</span>
+                                        <div>@obj.Attachs</div>
+                                    </div><!--tables-row-->
+                                </li><!--col2-->
+                                <li class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-xx-8">
+                                    <div class="tables-row">
+                                        <span>日期</span>
+                                        <div>
+                                            @obj.CreateDate
+                                        </div>
+                                    </div><!--tables-row-->
+                                </li><!--col2-->
+                            </ul>
+                        </dd>
+                    </dl>
+                }
+            </div>
+        </div>
+    </div>
+</form>

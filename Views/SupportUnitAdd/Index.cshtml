@@ -1,0 +1,90 @@
+﻿@using LongtermCare.DataModel.LongtermCare.DataModel;
+@using LTCareRate.Models.DataModel;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_Blank.cshtml";
+    UnitAToBSum hR = new UnitAToBSum();
+    if (TempData["UnitAToBSum"] != null)
+    {
+        List<UnitAToBSum> listhalloc = (List<UnitAToBSum>)TempData["UnitAToBSum"];
+        if (listhalloc.Count > 0)
+        {
+            hR = listhalloc[0];
+        }
+        else
+        {
+            hR.TrSeialNo = -1;
+        }
+    }
+    else
+    {
+        hR.TrSeialNo = -1;
+    }
+    List<CodeBase> codeBaseLst = (List<CodeBase>)TempData["CodeBase"];
+}
+@model LTCareRate.Models.ViewModel.SupportUnitAdd
+<div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
+    <div class="gw page-list mb-4">
+        <h3 class="font-weight-bold">合作服務提供單位 新增/修改</h3>
+    </div><!--gw-->
+    <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
+        <form runat="server" class="gw process-form" id="form1" method="post" action="/SupportUnitAdd/Add">
+            <div class="border-top-0 bg-light py-5 px-lg-5 px-md-4 px-xx-3">
+                <div class="row">
+                    <div class="col-xx-12">
+                        <div class="row">
+                            <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
+                                <input type="hidden" value="@hR.TrSeialNo" id="TrSeialNo1" name="TrSeialNo1" />
+                                <div class="input-group input-group-lg align-items-center">
+                                    @*<input type="text" class="form-control order-3" id="ServiceType" name="ServiceType" value="@hR.LCareType" required>*@
+                                    <select id="ServiceType" name="ServiceType" class="form-control order-3" required>
+                                        @foreach (CodeBase obj in codeBaseLst)
+                                        {
+                                            if (obj.CodeTable == "UnitAtoBSum" && obj.CodeField == "LCareType")
+                                            {
+                                                if (hR.LCareType != null && obj.CodeValue == int.Parse(hR.LCareType).ToString("000"))
+                                                {
+                                                    <option value="@obj.CodeValue" selected>@obj.CodeText</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@obj.CodeValue">@obj.CodeText</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    <label for="ServiceType" class="mb-1 order-0 w-20">服務類別</label>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    <input type="text" class="form-control order-3" id="INSTNO" name="INSTNO" value="@hR.UnitBNo" required>
+                                    <label for="INSTNO" class="mb-1 order-0 w-20">機構代號</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    <input type="text" class="form-control order-3" id="INSTName" name="INSTName" value="@hR.UnitBName" required>
+                                    <label for="INSTName" class="mb-1 order-0 w-20">機構名稱</label>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    <input type="text" class="form-control order-3" id="CaseNo" name="CaseNo" value="@hR.TrCaseNum" required>
+                                    <label for="CaseNo" class="mb-1 order-0 w-20">個案數</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 text-center">
+                    <button type="reset" class="btn btn-lg btn-warning px-4" id="cancel">取&emsp;&ensp;消</button>
+                    <button type="submit" class="btn btn-lg btn-success px-4" id="save">儲&emsp;&ensp;存</button>
+                </div><!--12-->
+            </div>
+        </form>
+    </div>
+</div>
+
