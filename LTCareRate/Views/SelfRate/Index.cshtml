@@ -1,0 +1,174 @@
+﻿@using LTCareRate.Models.DataModel;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<ScoreItem> scoreItems = (List<ScoreItem>)TempData["ScoreItems"];
+    List<InstScoreTable> instScoreList = (List<InstScoreTable>)TempData["InstScores"];
+    double totalScore = 0;
+}
+@model LTCareRate.Models.DataModel.InstScoreTable
+<script type="text/javascript">
+    function sumScore()
+    {
+        //alert("hello");
+        $('input[id=scoreTotal]').val(0);
+        $('input[type=radio]:checked').each(function () {
+            if (this.id.indexOf("Score") != -1) {
+                //alert($('input[id=' + this.id + ']:checked').val());
+                //alert($('#scoreTotal').val());
+                //alert($('input[id=scoreTotal]').val());
+                var score = parseFloat($('input[id=' + this.id + ']:checked').val()) + parseFloat($('input[id=scoreTotal]').val());
+                $('input[id=scoreTotal]').val(score);
+                //$('scoreTotal').val($('scoreTotal').val() + score);
+            }
+        });
+    }
+</script>
+<div class="row justify-content-lg-between justify-content-xx-center">
+    <div class="col-xl-3 col-lg-3 col-md-11 pr-xl-5 pr-lg-0 mb-4">
+        <div class="row justify-content-md-between justify-content-xx-center">
+            <div class="col-lg-12 mb-4">
+                <div class="gw"></div>
+                <a class="media w-100 flex-wrap icon-link-set" href="#0">
+                    <span class="sprite size--60">
+                        <!--這裡放圖片，60px * 60px-->
+                        <img src="images/spearker-1.png" alt="">
+                    </span>
+                    <h6 class="align-self-center">
+                        評鑑作業
+                    </h6>
+                </a>
+                <ul class="list-group list-group-horizontal flex-wrap mt-4 active-red mb-5">
+                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                        @Html.ActionLink("基本資料", "Index", "Function")
+                    </li>
+                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                        @Html.ActionLink("人力配置", "Index", "HR")
+                    </li>
+                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                        @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
+                    </li>
+                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                        @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
+                    </li>
+                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                        @Html.ActionLink("自評表", "Index", "SelfRate")
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
+        <div class="gw page-list mb-4">
+            <h3 class="font-weight-bold">自評表</h3>
+        </div><!--gw-->
+        <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
+            <form runat="server" class="gw process-form" id="form1" method="post" action="/SelfRate/Calc">
+                <fieldset class="pb-2">
+                    <div class="table-wrap pb-0">
+                        <table class="table table-bordered mb-0 table-hover">
+                            <thead class="text-center">
+                                <tr class="font-weight-bold">
+                                    <th>基準</th>
+                                    <th>內容</th>
+                                    <th>基準說明</th>
+                                    <th>評分</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (ScoreItem scoreItem in scoreItems)
+                                {
+                                    foreach (ScoreItem scoreItemChild in scoreItem.ChildItems)
+                                    {
+                                        int rowSpanCount = scoreItemChild.ChildItems.Count + 1;
+                                        scoreItemChild.ChildItems.ForEach(o => { if (o.ChildItems != null) rowSpanCount += o.ChildItems.Count; });
+                                        <tr>
+                                            <td rowspan="@rowSpanCount">
+                                                @scoreItemChild.ItemNo @scoreItemChild.ItemDesc.Trim()
+                                            </td>
+                                        </tr>
+                                        foreach (ScoreItem scoreItemGrandSon in scoreItemChild.ChildItems)
+                                        {
+                                            int grandsonRowSpanCount = scoreItemGrandSon.ChildItems.Count + 1;
+                                            scoreItemGrandSon.ChildItems.ForEach(o => { if (o.ChildItems != null) grandsonRowSpanCount += o.ChildItems.Count; });
+                                            <tr>
+                                                <td rowspan="@grandsonRowSpanCount">
+                                                    @scoreItemGrandSon.ItemNo @scoreItemGrandSon.ItemDesc.Trim()
+                                                </td>
+                                            </tr>
+                                            if (scoreItemGrandSon.ChildItems != null)
+                                            {
+                                                foreach (ScoreItem scoreItemGrandGradnSon in scoreItemGrandSon.ChildItems)
+                                                {
+                                                    double fullscore = double.Parse(scoreItemGrandGradnSon.ItemScore);
+                                                    double halfscore = double.Parse(scoreItemGrandGradnSon.ItemScore) / 2;
+                                                    string nameId = scoreItemGrandGradnSon.ItemNo + "Score";
+                                                    InstScoreTable itemScoreTab = null;
+                                                    if (instScoreList != null)
+                                                    {
+                                                        instScoreList.ForEach(o =>
+                                                        {
+                                                            if (o.ItemNo == scoreItemGrandGradnSon.ItemNo)
+                                                            {
+                                                                itemScoreTab = o;
+                                                                totalScore += double.Parse(itemScoreTab.SelfScore);
+                                                                return;
+                                                            }
+                                                        });
+                                                    }
+                                                    <tr>
+                                                        <td>
+                                                            @scoreItemGrandGradnSon.ItemNo @scoreItemGrandGradnSon.ItemDesc.Trim()
+                                                        </td>
+                                                        <td nowrap="nowrap">
+                                                            @if (itemScoreTab != null)
+                                                            {
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == fullscore)
+                                                                {
+                                                                    <input type="radio" value="@fullscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
+                                                                }
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == halfscore)
+                                                                {
+                                                                    <input type="radio" value="@halfscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>部分符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
+                                                                }
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == 0)
+                                                                {
+                                                                    <input type="radio" value="0" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>不符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
+                                                                <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
+                                                                <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <br>
+                        分數：<input type="text" readonly="readonly" id="scoreTotal" name="scoreTotal" value="@totalScore" />&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" class="btn btn-lg btn-success px-4" id="submit" value="下 一 步">
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+

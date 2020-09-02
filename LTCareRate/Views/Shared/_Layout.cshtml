@@ -1,0 +1,306 @@
+﻿@using LongtermCare.DataModel.LongtermCare.DataModel
+@{
+    var action = TempData["action"];
+}
+<!DOCTYPE html>
+<html>
+<head lang="zh-Hant-TW">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="臺中市社區整合型服務中心評鑑">
+    <meta name="keywords" content="臺中市社區整合型服務中心評鑑">
+    <link rel="shortcut icon" href="images/summit.ico" type="image/x-icon">
+    <title>臺中市社區整合型服務中心評鑑</title>
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script src="Scripts/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="Content/bootstrap.min.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="Content/layout.min.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="Content/icomoon/style.min.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA 058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    @RenderSection("HeadIncludes", required: false)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.0/jspdf.umd.min.js"></script>
+    <script src="https://cdn.bootcss.com/jspdf/1.3.5/jspdf.min.js"></script>
+    <script src="https://cdn.bootcss.com/jspdf/1.3.5/jspdf.debug.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5 76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/jspdf-autotable/3.0.0-alpha.1/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        .k-grid .k-state-selected {
+            background-color: #C4FAEC;
+            color: #000000;
+        }
+
+            .k-grid .k-state-selected:hover {
+                background-color: #C4FAEC;
+                color: #000000;
+            }
+
+        .k-grid tr:hover,
+        .k-grid td.k-state-selected:hover,
+        .k-grid tr.k-state-selected:hover td {
+            color: #000000;
+            background-color: #C4FAEC;
+        }
+        /* Pager */
+        .pager {
+            margin: 8px 3px;
+            padding: 3px;
+        }
+
+            .pager .disabled {
+                border: 1px solid #ddd;
+                color: #999;
+                margin-top: 4px;
+                padding: 3px;
+                text-align: center;
+            }
+
+            .pager .current {
+                background-color: #6ea9bf;
+                border: 1px solid #6e99aa;
+                color: #fff;
+                font-weight: bold;
+                margin-top: 4px;
+                padding: 3px 5px;
+                text-align: center;
+            }
+
+            .pager span, .pager a {
+                margin: 4px 3px;
+            }
+
+            .pager a {
+                border: 1px solid #aaa;
+                padding: 3px 5px;
+                text-align: center;
+                text-decoration: none;
+            }
+    </style>
+    <script type="text/javascript">
+        function downloadPDF() {
+            var myTable = $("#myTable");
+            // 獲取title
+            var tableThs = myTable.find("thead th");
+            //獲取每個tr
+            var tableTrs = myTable.find("tbody tr");
+            var columns = [];
+            //處理title陣列
+            tableThs.each(function () {
+                columns.push({title: $(this).text(), key: $(this).text()});
+            });
+            //處理資料陣列
+            var data = [];
+            tableTrs.each(function () {
+                var tds = $(this).children();
+                var object = {};
+                //生成資料物件
+                $.each(columns, function (i, r) {
+                    var tdTitle = columns[i].key;
+                    //'object'跟上文物件名稱一致，動態件加屬性和值
+                    eval('object.'+tdTitle+"'='$(tds).eq(i).text()'");
+                });
+                data.push(object);
+            });
+            var doc = new jsPDF('p', 'pt');
+            doc.text(20, 20, 'hello world!');
+            doc.autoTable(columns, data, {});
+            doc.save('匯出.pdf');
+        }
+        function changeMenu() {
+            $("li").each(function () {
+                if ("@action" != "") {
+                    if (this.id == "@action") {
+                        $(this).addClass("active");
+                    }
+                    else {
+                        $(this).removeClass("active");
+                    }
+                }
+                else {
+                    if (this.id == "query") {
+                        $(this).addClass("active");
+                    }
+                    else {
+                        $(this).removeClass("active");
+                    }
+                }
+            });
+            @if (TempData["success"] != null)
+            {
+                <text>
+                alert('執行成功');
+                @if (TempData["parentreload"] != null && TempData["parentreload"].ToString() == "OK")
+                {
+                    <text>
+                    window.opener.location.reload();
+                    window.close();
+                    </text>
+                    TempData["parentreload"] = null;
+                }
+                </text>
+                TempData["success"] = null;
+            }
+            @if (TempData["SessionExipred"] != null && !string.IsNullOrEmpty(TempData["SessionExipred"].ToString()))
+            {
+                <text>
+                    alert('連線已過期，請重新登入!');
+                    window.location.href = ('@Url.Action("Index", "Login")');
+                </text>
+                TempData["SessionExipred"] = null;
+            }
+        }
+    </script>
+</head>
+@if (TempData["error"] != null)
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(Json.Encode(TempData["error"]));
+        alert(message);
+    </script>
+}
+<body onload="changeMenu()">
+    <div id="page">
+        <div class="container-fluid px-0">
+            <header class="gw">
+                <div class="header-top gw img-wrap">
+                    <div class="container-1920">
+                        <img src="images/top-desk.jpg" alt="" class="desktop">
+                        <img src="images/top-mb.jpg" alt="" class="mobi">
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="header-menu gw bg-primary">
+            <div class="container-1920 px-0">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-0">
+                    <a class="navbar-brand " href="#">
+                        <span class="sprite size--60 align-middle">
+                            <img src="images/logo.png" alt="">
+                        </span>
+                        <span class="font-weight-bold">台中市政府衛生局</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav flex-wrap justify-content-between w-100 ">
+                            <li id="latest" class="nav-item">
+                                @Html.ActionLink("最新消息", "Index", "Home", null, new { @class = "nav-link" })
+                            </li>
+                            @if (Session["AccountNo"] == null)
+                            {
+                                <li id="query" class="nav-item active">
+                                    @Html.ActionLink("線上登入", "Index", "Login", null, new { @class = "nav-link" })
+                                </li>
+                                for (int i = 1; i <= 24; i++)
+                                {
+                                    <li id="@i" class="nav-item active">
+                                        @*@Html.ActionLink("線上登入", "Index", "Login", null, new { @class = "nav-link" })*@
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                AccountBase accountBase = (AccountBase)Session["AccountBase"];
+                                if (accountBase.AccountType == "1")//評鑑單位
+                                {
+                                    <li id="query" class="nav-item active">
+                                        @Html.ActionLink("評鑑單位作業", "Index", "Function", null, new { @class = "nav-link" })
+                                    </li>
+                                    <li id="report" class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" id="navbar-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#0">相關報表</a>
+                                        <div class="dropdown-menu" aria-labelledby="navbar-2">
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="window.open('@Url.Action("BasicData", "Report", new { accountNo = Session["INSTNO"] })', '', 'width=1500,height=800');">基本資料表</a>
+                                        </div>
+                                    </li>
+                                }
+                                if (accountBase.AccountType == "2")//委員
+                                {
+                                    <li id="committee" class="nav-item active">
+                                        @Html.ActionLink("委員評鑑作業", "Index", "CommitteeMember", null, new { @class = "nav-link" })
+                                    </li>
+                                }
+                                if (accountBase.AccountType == "9")//管理者
+                                {
+                                    <li id="administrator" class="nav-item active">
+                                        <a class="nav-link" href="#">管理者作業</a>
+                                    </li>
+                                }
+                                for (int i = 2; i <= 24; i++)
+                                {
+                                    <li id="@i" class="nav-item active">
+                                        @*@Html.ActionLink("線上登入", "Index", "Login", null, new { @class = "nav-link" })*@
+                                    </li>
+                                }
+                            }
+                            <li id="25" class="nav-item active">
+                                @if (@Session["AccountNo"] != null)
+                                {
+                                    <text><div class="nav-link active">歡迎，@Session["AccountNo"].ToString()&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("登出", "Index", "LogOut")</div></text>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <main class="gw mh-70 bg-white">
+            <article class="gw py-5">
+                <section class="container-1920">
+                    @RenderBody()
+                </section>
+            </article>
+        </main>
+        <footer class="gw pt-4  pb-lg-4 bg-faded px-xl-0 px-lg-3 px-xx-0">
+            <div class="container-1920 mt-4">
+                <div class="row justify-content-lg-between justify-content-xx-center">
+                    <div class="col-xl-2 col-lg-3 mb-lg-0 mb-xx-3 text-xl-left text-xx-center">
+                        <span class="sprite size--150"><img src="images/logo.png" alt=""></span>
+                    </div><!--3-->
+                    <div class="col-xl-3 col-lg-4 col-md-7 col-sm-9 col-xs-10 col-xx-11 mb-lg-0 mb-xx-5 text-lg-left text-xx-center">
+                        <h5>主辦單位</h5>
+                        <div class="row">
+                            <h6 class="col-12">台中市政府衛生局</h6>
+                            <div class="col-12">
+                                <p>諮詢電話：(04)2526-5394</p>
+                                <p>服務時間：週一至週五 08：00～12：00</p>
+                                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13：00～17：00</p>
+                            </div><!--12-->
+                        </div><!--row-->
+                    </div><!--4-->
+                    <div class="col-xl-4 col-lg-5 col-md-8 col-sm-9 col-xs-10 col-xx-11 mb-lg-0 mb-xx-5 text-lg-left text-xx-center">
+                        <h5>評鑑辦理及諮詢</h5>
+                        <div class="row">
+                            <h6 class="col-12">松盟科技股份有限公司</h6>
+                            <div class="col-12">
+                                <p>電話：(04)2315-2500 分機 814、811</p>
+                                <p>服務時間：週一至週五 9：00～12：00　13：30～17：00<span class="d-lg-inline d-xx-block">（午休時間為12:00~13:30，請暫勿來電)</span></p>
+                            </div><!--12-->
+                        </div><!--row-->
+                    </div><!--4-->
+                    <div class="col-1k-2 col-xl-3 col-lg-9 col-md-9 col-sm-9 col-xs-10 col-xx-11 mb-lg-0 mb-xx-5 ml-lg-auto mt-xl-0 mt-xx-3 text-lg-left text-xx-center">
+                        <div class="row justify-content-lg-start justify-content-xx-center">
+                            <div class="col-xl-12 col-lg-5 col-md-8  mb-lg-2 mb-xx-3">
+                                <h5 class="mb-0">客服信箱  <i class="sprite size--30 align-middle pl-1"><img src="images/mail.png" alt=""></i></h5>
+                                <p><a href="mailto: twrecruit@summit-edu.com.tw">twrecruit@summit-edu.com.tw</a></p>
+                            </div><!--12-->
+                            <div class="col-xl-12  col-lg-6 col-md-8 mb-lg-2 mb-xx-3 pl-xl-3 pl-lg-4 ml-xl-0 ml-lg-2">
+                                <h5 class="mb-0">松盟科技 <i class="sprite size--30 align-middle pl-1"><img src="images/fb.png" alt=""></i></h5>
+                                <p><a href="https://www.facebook.com/summit.recruit/" target="blank">國營事業考試服務中心</a></p>
+                            </div><!--12-->
+                            <div class="col-xl-12 col-lg-12 mt-xl-0 mt-xx-3">
+                                <small class="text-muted">建議使用 Chrome、Internet Explorer 10.0 以上版本瀏覽器 </small>
+                            </div><!--12-->
+                        </div><!--row-->
+                    </div><!--4-->
+                </div><!--row-->
+            </div>
+        </footer>
+    </div>
+    <script src="Scripts/jquery.js"></script>
+    <script src="Scripts/bootstrap.js"></script>
+    <script src="Scripts/use.min.js"></script>
+</body>
+</html>

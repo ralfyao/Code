@@ -1,0 +1,57 @@
+﻿@using LTCareRate.Utility
+
+@{
+    ViewBag.Title = "ServiceUnit";
+    Layout = "~/Views/Shared/_Layout_Blank.cshtml";
+}
+
+<h2>合作服務提供單位</h2>
+@model IEnumerable<LTCareRate.Models.DataModel.UnitAToBSum>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LCareType)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.UnitBNo)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.UnitBName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TrCaseNum)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>*@
+        @*<th></th>*@
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        string serviceType = Utility.getCodeBaseText(null, "UnitAtoBSum", "LCareType", int.Parse(item.LCareType).ToString("000"));
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => serviceType)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.UnitBNo)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitBName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrCaseNum)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>*@
+        </tr>
+    }
+
+</table>

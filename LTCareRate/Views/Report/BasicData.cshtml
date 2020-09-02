@@ -1,0 +1,314 @@
+﻿@using LongtermCare.DataModel.LongtermCare.DataModel
+@using LTCareRate.Models.DataModel
+@using LTCareRate.Models.DataModel
+@using LTCareRate.Utility
+@{
+    ViewBag.Title = "BasicData";
+    Layout = "~/Views/Shared/_Layout_Blank.cshtml";
+    string accountNo = Session["AccountNo"] == null ? "" : Session["AccountNo"].ToString();
+}
+@model LTCareRate.Models.ViewModel.BasicData
+<script src="Scripts/jquery-3.4.1.js"></script>
+<script src="Scripts/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" href="~/Content/bootstrap.min.css" media="screen" type="text/css">
+<link rel="stylesheet" href="~/Content/layout.min.css" media="screen" type="text/css">
+<link rel="stylesheet" href="~/Content/icomoon/style.min.css" media="screen" type="text/css">
+<style type="text/css">
+    .bg-darkgrey {
+        background-color: lightgrey;
+    }
+
+    .font-kai {
+        font-family: DFKai-sb;
+    }
+</style>
+<div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light" id="print">
+    <div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
+        <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
+            @*<form runat="server" class="gw process-form" id="form1" method="post" action="/HR/Index">*@
+            <fieldset class="pb-2 font-kai">
+                <div class="table-wrap pb-0 center-block align-self-center">
+                    <h3>臺中市社區整合型服務中心(A 單位)評鑑作業之基本資料表</h3>
+                </div>
+                <table class="table table-bordered table-striped mb-0 table-hover" border="1" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td colspan="4" class="bg-darkgrey" nowrap="nowrap">一、基本資料</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(一)單位名稱：</td>
+                        <td colspan="3">@Model.INSTName</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(二)電話：</td>
+                        <td colspan="3">@Model.INSTTel</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(三)地址：</td>
+                        <td colspan="3">@Model.address</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(四)組織屬性：</td>
+                        <td colspan="3">@Model.AttrMed</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(五)設立日期：</td>
+                        <td colspan="3">@Model.EstabDate</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(六)特約區域：</td>
+                        <td colspan="3">@Model.SpecialArea</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(七)填表人：</td>
+
+                        <td>@accountNo</td>
+                        <td class="bg-darkgrey" nowrap="nowrap">連絡電話：@Model.INSTTel</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">e-mail：</td>
+                        <td colspan="3">@Model.EMail</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">(八)人力配置：</td>
+                        <td colspan="3">
+                            <table border="1" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey"></td>
+                                        <td class="bg-darkgrey">專業背景</td>
+                                        <td class="bg-darkgrey">專任(名)</td>
+                                        <td class="bg-darkgrey">兼任(名)</td>
+                                        <td class="bg-darkgrey">小計(名)</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (HRAlloc hrAlloc in Model.hrAlloc)
+                                    {
+                                        int sum = hrAlloc.FullTimeNum + hrAlloc.PartTimeNum;
+                                        <tr>
+                                            <td>@hrAlloc.JobType</td>
+                                            <td>@hrAlloc.PROBG</td>
+                                            <td>@hrAlloc.FullTimeNum</td>
+                                            <td>@hrAlloc.PartTimeNum</td>
+                                            <td>@sum</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">
+                            (九)個管服務量
+                        </td>
+                        <td colspan="3">
+                            <table border="1" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey" rowspan="2" nowrap="nowrap">年月份</td>
+                                        <td class="bg-darkgrey" rowspan="2" nowrap="nowrap">服務階段</td>
+                                        <td class="bg-darkgrey" colspan="2" nowrap="nowrap">新案(AA01)</td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            複評/<br />
+                                            AA計畫異動<br />
+                                            (AA01)
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            持續追蹤<br />
+                                            (AA02)
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            累積個案量<br />
+                                            (AA01 + AA02)
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            多元服務個案數<br />
+                                            綜合2種服務以上
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            自行轉介<br />
+                                            照管中心個案數
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            專職<br />
+                                            A個管員
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            兼職<br />
+                                            A個管員
+                                        </td>
+                                        <td class="bg-darkgrey" nowrap="nowrap">
+                                            平均每個<br />
+                                            專職個管員<br />
+                                            每月服務量
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-darkgrey">案量</td>
+                                        <td class="bg-darkgrey">總天數</td>
+                                        <td class="bg-darkgrey">案量</td>
+                                        <td class="bg-darkgrey">案量</td>
+                                        <td class="bg-darkgrey">案量</td>
+                                        <td class="bg-darkgrey">案量</td>
+                                        <td class="bg-darkgrey">案量</td>
+                                        <td class="bg-darkgrey">人數</td>
+                                        <td class="bg-darkgrey">人數</td>
+                                        <td class="bg-darkgrey">平均每月服務量</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        List<CodeBase> lstCaseSvrEFF = Utility.getCodeBaseTextList("CaseSvrEFF", "SvrType", null);
+                                        int rowspan = lstCaseSvrEFF.Count + 1;
+                                        int NewCaseNum = 0;
+                                        int NewCaseReNum = 0;
+                                    }
+                                    @foreach (var item in Model.caseSvrs)
+                                    {
+                                        int.TryParse(item.Svr01CaseRenum == null ? "" : item.Svr01CaseRenum.ToString(), out NewCaseReNum);
+                                    <tr>
+                                        <td rowspan="@rowspan">@item.YM</td>
+                                        @foreach (CodeBase itemCode in lstCaseSvrEFF)
+                                        {
+                                            <td height="0"></td>
+                                        }
+                                        <td height="0"></td>
+                                        <td rowspan="@rowspan">@item.TraceCaseTotal</td>
+                                        @foreach (CodeBase itemCode in lstCaseSvrEFF)
+                                        {
+                                            var lsst = from cc in Model.caseSvrsEff
+                                                       where cc.YM == item.YM
+                                                       select cc;
+                                            List<CaseSvrEff> objSrvEffLst = (List<CaseSvrEff>)lsst.ToList();
+                                            if (objSrvEffLst.Count > 0)
+                                            {
+                                                int.TryParse(objSrvEffLst[0].CaseUpNum == null ? "" : objSrvEffLst[0].CaseUpNum.ToString(), out NewCaseNum);
+                                            }
+                                        }
+                                        @{
+                                            var AccumulatedCount = item.TraceCaseTotal + NewCaseNum + NewCaseReNum;
+                                        }
+                                        <td rowspan="@rowspan">@AccumulatedCount</td>
+                                        <td rowspan="@rowspan">@item.MultSvrCaseNum</td>
+                                        <td rowspan="@rowspan">@item.SelfReferral</td>
+                                        <td rowspan="@rowspan">@item.FullPeoNum</td>
+                                        <td rowspan="@rowspan">@item.PartPeoNum</td>
+                                    </tr>
+                                            foreach (CodeBase itemCode in lstCaseSvrEFF)
+                                            {
+                                                var lsst = from cc in Model.caseSvrsEff
+                                                           where cc.YM == item.YM
+                                                           select cc;
+                                                List<CaseSvrEff> objSrvEffLst = (List<CaseSvrEff>)lsst.ToList();//Utility.getCaseSvrEff((DateTime.Now.Year - 1911).ToString(), item.YM, Session["INSTNO"].ToString(), itemCode.CodeValue);
+                                            <tr>
+                                                <td>@itemCode.CodeText</td>
+                                                @if (objSrvEffLst.Count > 0)
+                                                {
+                                                    int num = 0;
+                                                    if (itemCode.CodeValue == "01")
+                                                    {
+                                                        int.TryParse(item.Svr01CaseRenum == null ? "" : item.Svr01CaseRenum.ToString(), out num);
+                                                    }
+                                                    if (itemCode.CodeValue == "02")
+                                                    {
+                                                        int.TryParse(item.Svr02CaseRenum == null ? "" : item.Svr02CaseRenum.ToString(), out num);
+                                                    }
+                                                    if (itemCode.CodeValue == "03")
+                                                    {
+                                                        int.TryParse(item.Svr03CaseRenum == null ? "" : item.Svr03CaseRenum.ToString(), out num);
+                                                    }
+                                                    <text>
+                                                    <td>@objSrvEffLst[0].CaseUpNum</td>
+                                                    <td>@objSrvEffLst[0].CaseDays</td>
+                                                    <td>@num</td>
+                                                    </text>
+                                                }
+                                            </tr>
+                                                }
+                                            }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">
+                            (十)個案管理時效
+                        </td>
+                        <td colspan="3">
+                            <table border="1" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey">時間</td>
+                                        @foreach (CodeBase itemCode in lstCaseSvrEFF)
+                                        {
+                                            <td class="bg-darkgrey">@itemCode.CodeText</td>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{  decimal? sumUpAvgDays = 0;
+                                        decimal? sumUpCasePer02 = 0;
+                                        decimal? sumUpCasePer03 = 0;
+                                     }
+                                    @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
+                                    {
+                                    <tr>
+                                        <td>@eff.YM</td>
+                                        <td>@eff._01UpAvgDays</td>
+                                        @{ sumUpAvgDays += (eff._01UpAvgDays == null ? 0 : eff._01UpAvgDays);}
+                                        <td>@eff._02UpCasePer</td>
+                                        @{ sumUpCasePer02 += (eff._02UpCasePer == null ? 0 : eff._02UpCasePer); }
+                                        <td>@eff._03UpCasePer</td>
+                                        @{ sumUpCasePer03 += (eff._03UpCasePer == null ? 0 : eff._03UpCasePer); }
+                                    </tr>
+                                    }
+                                    <tr>
+                                        <td>總計</td>
+                                        <td>@sumUpAvgDays</td>
+                                        <td>@sumUpCasePer02</td>
+                                        <td>@sumUpCasePer03</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">
+                            (十一)合作服務提供單位
+                        </td>
+                        <td colspan="3">
+                            <table border="1" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey">服務類別</td>
+                                        <td class="bg-darkgrey">機構名稱</td>
+                                        <td class="bg-darkgrey">實際轉介個案數</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (UnitAToBSum item in Model.unitAToBSums)
+                                    {
+                                        string serviceType = Utility.getCodeBaseText(null, "UnitAtoBSum", "LCareType", int.Parse(item.LCareType).ToString("000"));
+                                        <tr>
+                                            <td>
+                                                @serviceType
+                                            </td>
+                                            <td>
+                                                @item.UnitBName
+                                            </td>
+                                            <td>
+                                                @item.TrCaseNum
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            @*</form>*@
+        </div>
+    </div>
+</div>
+@*<input id="pdf-button" type="button" value="Download PDF" onclick="downloadPDF()" />*@
