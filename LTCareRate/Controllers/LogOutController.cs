@@ -11,8 +11,7 @@ namespace LTCareRate.Controllers
         // GET: LogOut
         public ActionResult Index()
         {
-            Session["AccountNo"] = null;
-            Session["INSTNO"] = null;
+            Session.Clear();
             return RedirectToAction("Index", "Login");
         }
     }

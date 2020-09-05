@@ -42,7 +42,7 @@ namespace LTCareRate.Controllers
                 if (listdataAccount.Count > 0)
                 {
                     INSTBase inst = new INSTBase();
-                    inst.INSTNO = listdataAccount[0].INSTNO;
+                    inst.INSTNO = listdataAccount[0].AcntTypeNo;
                     List<INSTBase> listdataInst = (List<INSTBase>)mysqlDBA_INSTBase.getDataList(inst);
                     if (listdataInst.Count > 0)
                     {
@@ -50,12 +50,12 @@ namespace LTCareRate.Controllers
                         model.INSTName = baseData.INSTName;
                         model.INSTTel = baseData.INSTTel;
                         model.EstabDate = Utility.Utility.convertUDT2ROCDateFormat(baseData.IncDate);
-                        model.city = baseData.INSTAddress.Substring(0, 3);
-                        model.area = baseData.INSTAddress.Substring(3, 3);
+                        model.city = Utility.Utility.getCityCode(baseData.INSTAddress.Substring(0, 3));
+                        model.area = Utility.Utility.getAreaCode(baseData.INSTAddress.Substring(3, 3));
                         model.address = baseData.INSTAddress.Substring(6);
-                        model.AttrMed = Utility.Utility.getBaseAttr(baseData.AttrMed);
-                        model.AttrLC = Utility.Utility.getBaseAttr(baseData.AttrLC);
-                        model.AttrOther = Utility.Utility.getBaseAttr(baseData.AttrOther);
+                        model.AttrMed = baseData.AttrMed;
+                        //model.AttrLC = baseData.AttrLC;
+                        //model.AttrOther = baseData.AttrOther;
                         ViewBag.city = (List<CityBase>)mysqlDBA_CityBase.getAllDataList(new CityBase());
                         ViewBag.area = (List<AreaBase>)mysqlDBA_AreaBase.getAllDataList(new AreaBase());
                         UnitAYear unitAYear = new UnitAYear();
@@ -67,6 +67,11 @@ namespace LTCareRate.Controllers
                             ViewBag.uaYList = uaYList[0];
                             model.SpecialArea = uaYList[0].MainAreas;
                         }
+                        model.AttrMedList = Utility.Utility.getAttrList(AttrBase.TypeList.Medical);
+                        model.AttrMedList.AddRange(Utility.Utility.getAttrList(AttrBase.TypeList.Longterm));
+                        model.AttrMedList.AddRange(Utility.Utility.getAttrList(AttrBase.TypeList.Other));
+                        //model.AttrLCList = Utility.Utility.getAttrList(AttrBase.TypeList.Longterm);
+                        //model.AttrOtherList = Utility.Utility.getAttrList(AttrBase.TypeList.Other);
                     }
                 }
             }
@@ -96,12 +101,15 @@ namespace LTCareRate.Controllers
                     return RedirectToAction("Index", "Login", null);
                 }
                 string instNo = Session["INSTNO"].ToString();
-                string areaCode = new Random().Next(1, 9).ToString();
+                string areaCode = post.area;
+                string cityName = Utility.Utility.getCityBase(post.city);
+                string areaName = Utility.Utility.getAreaBase(post.area);
                 uaY.Year = (DateTime.Now.Year - 1911).ToString();
                 uaY.INSTNO = instNo;
                 uaY.INSTName = post.INSTName;
                 uaY.INSTTel = post.INSTTel;
-                uaY.INSTAddress = post.city + post.area + post.address;
+                uaY.CityCode = post.city;
+                uaY.INSTAddress = cityName + areaName + post.address;
                 uaY.Contact = post.Contact;
                 uaY.ContactTel = post.ContactTel;
                 uaY.AreaCode = areaCode;
@@ -114,12 +122,12 @@ namespace LTCareRate.Controllers
                 INSTBase baseInst = new INSTBase();
                 baseInst.INSTName = post.INSTName;
                 baseInst.INSTNO = instNo;
-                baseInst.INSTAddress = post.city + post.area + post.address;
+                baseInst.INSTAddress = cityName + areaName + post.address;
                 baseInst.INSTTel = post.INSTTel;
                 baseInst.IncDate = Utility.Utility.convertROC2UDTDateFormat(post.EstabDate);//new DateTime(int.Parse(post.EstabDate.Split('/')[0]), int.Parse(post.EstabDate.Split('/')[1]), int.Parse(post.EstabDate.Split('/')[2])).ToString("yyyy-MM-dd HH:mm:ss") ;
-                baseInst.AttrMed = getBaseAttrCode(post.AttrMed);
-                baseInst.AttrLC = getBaseAttrCode(post.AttrLC);
-                baseInst.AttrOther = getBaseAttrCode(post.AttrOther);
+                baseInst.AttrMed = post.AttrMed;
+                //baseInst.AttrLC = post.AttrLC;
+                //baseInst.AttrOther = post.AttrOther;
                 mysqlDBA_InstBase.InsertOrUpdate(baseInst);
             }
             catch (Exception ex)
@@ -139,7 +147,7 @@ namespace LTCareRate.Controllers
             {
                 MysqlDBA<AttrBase> mysqlDBA_AttrBase = new MysqlDBA<AttrBase>(CONNSTR);
                 AttrBase baseattr = new AttrBase();
-                baseattr.AttrName = medInst;
+                baseattr.AttrCode = medInst;
                 List<AttrBase> objLst = (List<AttrBase>)mysqlDBA_AttrBase.getDataListNoKey(baseattr);
                 if (objLst.Count > 0)
                 {

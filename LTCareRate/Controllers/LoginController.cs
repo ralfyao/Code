@@ -63,11 +63,12 @@ namespace LTCareRate.Controllers
                     bool userRole = false;
                     accountBasesList.ForEach(o =>
                     {
-                        if (o.AcntPwd == password)
+                        if (o.AccountNo == account && o.AcntPwd == password)
                         {
                             verifyPasswd = true;
                             Session["INSTNO"] = o.AcntTypeNo;
                             Session["AccountNo"] = account;
+                            Session["AccountName"] = o.AcoountName;
                             Session["AccountBase"] = o;
                             roleCodeList.ForEach(t =>
                             {
@@ -103,9 +104,14 @@ namespace LTCareRate.Controllers
                 Session["AccountNo"] = account;
                 return RedirectToAction("Index", "Home", null);
             }
-            if (Session["userRole"].ToString() == "1")
+            if (Session["userRole"] != null && Session["userRole"].ToString() == "1")
             {
                 TempData["action"] = "query";
+            }
+            else
+            {
+                TempData["error"] = "Error: 連線失效，請重新登入.";
+                return RedirectToAction("Index", "Login", null);
             }
             if (Session["userRole"].ToString() == "2")
             {

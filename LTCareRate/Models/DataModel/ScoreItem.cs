@@ -22,6 +22,7 @@ namespace LTCareRate.Models.DataModel
         public string ItemDesc { get; set; }
         public string ItemGrade { get; set; }
         public string CreateDate { get; set; }
+        public string IsFocus { get; set; }
         public List<ScoreItem> ChildItems { get; set; } = new List<ScoreItem>();
 
         public void getChildItem(MysqlDBA<ScoreItem> mysqlDBA, List<InstScoreTable> instScoreTables, string INSTNO)
@@ -44,6 +45,7 @@ namespace LTCareRate.Models.DataModel
                         item.ItemDesc = row["ItemDesc"].ToString();
                         item.ItemGrade = row["ItemGrade"].ToString();
                         item.CreateDate = row["CreateDate"].ToString();
+                        item.IsFocus = row["IsFocus"].ToString();
                         List<InstScoreTable> instScoreList = Utility.Utility.getInstScore(INSTNO, item.ItemNo, item.EvalYear);
                         if (instScoreList.Count > 0)
                         {

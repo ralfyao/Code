@@ -45,13 +45,13 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         /// 醫事機構屬性
         /// </summary>
         public string AttrMed { get; set; }
-        /// <summary>
-        /// 長照機構屬性
-        /// </summary>
-        public string AttrLC { get; set; }
-        /// <summary>
-        /// 其他屬性
-        /// </summary>
-        public string AttrOther { get; set; }
+        ///// <summary>
+        ///// 長照機構屬性
+        ///// </summary>
+        //public string AttrLC { get; set; }
+        ///// <summary>
+        ///// 其他屬性
+        ///// </summary>
+        //public string AttrOther { get; set; }
     }
 }

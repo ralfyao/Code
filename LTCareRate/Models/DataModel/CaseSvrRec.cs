@@ -26,7 +26,7 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         /// 個案序號
         /// </summary>
         [Key]
-        public int CaseSerNo { get; set; }
+        public int? CaseSerNo { get; set; }
         /// <summary>
         /// 個案代號
         /// </summary>

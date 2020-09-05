@@ -61,6 +61,9 @@ namespace LTCareRate.Controllers
                     }
                     basicData.SpecialArea = result.MainAreas;
                     basicData.EMail = result.EMail;
+                    basicData.ResignNum = result.ResignNum;
+                    basicData.CMDBegYearNum = result.CMDBegYearNum;
+                    basicData.CMDPeriodAddNum = result.CMDPeriodAddNum;
                     HRAlloc hRAlloc = new HRAlloc();
                     hRAlloc.INSTNO = INSTNO;
                     hRAlloc.Year = (DateTime.Now.Year - 1911).ToString();

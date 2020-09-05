@@ -9,6 +9,9 @@ namespace LTCareRate.Models.ViewModel
 {
     public class HRData
     {
+        public string YearLeaveCnt { get; set; }
+        public string YearStartCnt { get; set; }
+        public string RateAddCnt { get; set; }
         public string personadmin { get; set; }
         public string ProfBackSelect { get; set; }
         public string ProfCount { get; set; }

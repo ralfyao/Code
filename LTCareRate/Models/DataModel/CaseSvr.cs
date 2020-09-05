@@ -39,16 +39,16 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         /// 多元服務個案數
         /// </summary>
         public int? MultSvrCaseNum { get; set; }
-        public int? Svr01CaseRenum { get; set; }
-        /// <summary>
-        /// 持續追蹤量(AA02)
-        /// </summary>
-        public int? Svr02CaseRenum { get; set; }
-        /// <summary>
-        /// 多元服務個案數
-        /// </summary>
-        public int? Svr03CaseRenum { get; set; }
-        /// <summary>
+        //public int? Svr01CaseRenum { get; set; }
+        ///// <summary>
+        ///// 持續追蹤量(AA02)
+        ///// </summary>
+        //public int? Svr02CaseRenum { get; set; }
+        ///// <summary>
+        ///// 多元服務個案數
+        ///// </summary>
+        //public int? Svr03CaseRenum { get; set; }
+        ///// <summary>
         /// 自行轉介個案數
         /// </summary>
         public int? SelfReferral { get; set; }

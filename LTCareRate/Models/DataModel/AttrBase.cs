@@ -29,5 +29,11 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         /// 備註
         /// </summary>
         public string AttrRem { get; set; }
+        public enum TypeList 
+        {
+            Medical = 1,
+            Longterm = 2,
+            Other = 3
+        }
     }
 }

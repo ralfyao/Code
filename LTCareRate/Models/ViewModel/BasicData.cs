@@ -16,8 +16,11 @@ namespace LTCareRate.Models.ViewModel
         public string area { get; set; }
         public string address { get; set; }
         public string AttrMed { get; set; }
-        public string AttrLC { get; set; }
-        public string AttrOther { get; set; }
+        public string ResignNum { get; set; }
+        public string CMDBegYearNum { get; set; }
+        public string CMDPeriodAddNum { get; set; }
+        //public string AttrLC { get; set; }
+        //public string AttrOther { get; set; }
         public string EstabDate { get; set; }
         public string SpecialArea { get; set; }
         public string Contact { get; set; }
@@ -40,5 +43,8 @@ namespace LTCareRate.Models.ViewModel
         /// </summary>
         public List<CaseSvrEff> caseSvrsEff { get; set; } = new List<CaseSvrEff>();
         public List<CaseSvrEffView> caseSvrsEffView { get; set; } = new List<CaseSvrEffView>();
+        public List<AttrBase> AttrMedList { get; set; } = new List<AttrBase>();
+        public List<AttrBase> AttrLCList { get; set; } = new List<AttrBase>();
+        public List<AttrBase> AttrOtherList { get; set; } = new List<AttrBase>();
     }
 }

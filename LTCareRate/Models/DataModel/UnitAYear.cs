@@ -23,6 +23,7 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         /// </summary>
         [Key]
         public string INSTNO { get; set; }
+        public string CityCode { get; set; }
         /// <summary>
         /// 縣市代碼
         /// </summary>
@@ -67,5 +68,17 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         public string CreateUser { get; set; }
         public string Modifydate { get; set; }
         public string ModifyUser { get; set; }
+        /// <summary>
+        /// 年離職人數
+        /// </summary>
+        public string ResignNum { get; set; }
+        /// <summary>
+        /// 年初個管人數
+        /// </summary>
+        public string CMDBegYearNum { get; set; }
+        /// <summary>
+        /// 評鑑期間增加個管人數
+        /// </summary>
+        public string CMDPeriodAddNum { get; set; }
     }
 }

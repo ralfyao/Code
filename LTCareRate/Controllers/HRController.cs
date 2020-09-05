@@ -20,10 +20,16 @@ namespace LTCareRate.Controllers
         public ActionResult Index(int page = 1)
         {
             MysqlDBA<HRAlloc> dbaHRAlloc = new MysqlDBA<HRAlloc>(FunctionController.CONNSTR);
+            MysqlDBA<UnitAYear> dbaUnitAYear = new MysqlDBA<UnitAYear>(FunctionController.CONNSTR);
             List<HRAlloc> listData = new List<HRAlloc>();
             HRData hrData = new HRData();
             try
             {
+                UnitAYear queryCritUAY = new UnitAYear();
+                queryCritUAY.INSTNO = Session["INSTNO"].ToString();
+                queryCritUAY.Year = (DateTime.Now.Year - 1911).ToString();
+                List<UnitAYear> UAYS = (List<UnitAYear>)dbaUnitAYear.getDataList(queryCritUAY);
+
                 HRAlloc queryCrit = new HRAlloc();
                 queryCrit.Year = (DateTime.Now.Year - 1911).ToString();
                 if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
@@ -51,6 +57,12 @@ namespace LTCareRate.Controllers
                 List<CodeBase> codeBaseData = new List<CodeBase>();
                 codeBaseData = (List<CodeBase>)new MysqlDBA<CodeBase>(FunctionController.CONNSTR).getAllDataList(new CodeBase());
                 hrData.hrDataList = listData.OrderBy(p => p.HRAllocSerNo).ToPagedList(page == 0 ? 1 : page, DefaultPageSize);
+                if (UAYS.Count > 0)
+                {
+                    hrData.YearLeaveCnt = UAYS[0].ResignNum;
+                    hrData.YearStartCnt = UAYS[0].CMDBegYearNum;
+                    hrData.RateAddCnt = UAYS[0].CMDPeriodAddNum;
+                }
                 TempData["CodeBase"] = codeBaseData;
             }
             catch (Exception ex)
@@ -64,8 +76,45 @@ namespace LTCareRate.Controllers
             return View(hrData);
         }
         [HttpPost]
-        public ActionResult Index(FormCollection data)
+        public ActionResult Index(HRData data)
         {
+            UnitAYear unitAYear = new UnitAYear();
+
+            MysqlDBA<UnitAYear> mysqlDBA = new MysqlDBA<UnitAYear>(FunctionController.CONNSTR);
+            try
+            {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
+                unitAYear.INSTNO = Session["INSTNO"].ToString();
+                unitAYear.Year = (DateTime.Now.Year - 1911).ToString();
+                List<UnitAYear> unitAYears = (List<UnitAYear>)mysqlDBA.getDataList(unitAYear);
+                if (unitAYears.Count > 0)
+                {
+                    unitAYear = unitAYears[0];
+                }
+                unitAYear.ResignNum = data.YearLeaveCnt;
+                unitAYear.CMDBegYearNum = data.YearStartCnt;
+                unitAYear.CMDPeriodAddNum = data.RateAddCnt;
+                unitAYear.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
+                unitAYear.EvalDate = DateTime.Parse(unitAYear.EvalDate).ToString("yyyy-MM-dd");
+                unitAYear.Modifydate = DateTime.Parse(unitAYear.EvalDate).ToString("yyyy-MM-dd");
+                unitAYear.ModifyUser = Session["AccountNo"].ToString();
+                mysqlDBA.InsertOrUpdate(unitAYear);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex + ex.StackTrace);
+                TempData["action"] = "Function";
+                TempData["error"] = ex + ex.StackTrace;
+                //tran.Rollback();
+                return RedirectToAction("Index", "HR", null);
+            }
             return RedirectToAction("Index", "CaseListCount", null);
         }
 

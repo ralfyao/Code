@@ -31,8 +31,11 @@ namespace LTCareRate.Controllers
             DataSet result;
             DataRowCollection dataRow;
             DataColumnCollection dataColumn;
+            int colIndex = 1;
+            int rowIndex = 0;
             try
             {
+                
                 MysqlDBA<CaseSvrRec> mysqlDBA = new MysqlDBA<CaseSvrRec>(FunctionController.CONNSTR);
                 CaseSvrRec eachObj = new CaseSvrRec();
                 if (file_input_list == null || file_input_list.ContentLength == 0)
@@ -47,6 +50,7 @@ namespace LTCareRate.Controllers
                     fileName = fileName.Split('.')[0] + DateTime.Now.ToString("yyyyMMddHHmmss") + "." + fileName.Split('.')[1];
                     var path = Path.Combine(Server.MapPath("~/FileUploads"), fileName);
                     file_input_list.SaveAs(path);
+
                     using (FileStream fileStream = System.IO.File.Open(path, FileMode.Open, FileAccess.Read))
                     {
                         using (IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream))
@@ -62,8 +66,29 @@ namespace LTCareRate.Controllers
                             });
                             dataRow = result.Tables[0].Rows;
                             dataColumn = result.Tables[0].Columns;
-                            for (int i = 1; i < dataRow.Count; i++)
+                            string strCaseNo = string.Empty;
+                            for (int i = 3; i < dataRow.Count; i++)
                             {
+                                //檢查檔案內容案號
+                                if (strCaseNo == result.Tables[0].Rows[i][0].ToString())
+                                {
+                                    throw new Exception("案號" + result.Tables[0].Rows[i][0].ToString() + "重複!");
+                                }
+                                else
+                                {
+                                    strCaseNo = result.Tables[0].Rows[i][0].ToString();
+                                }
+                                //檢查資料庫案號
+                                eachObj = new CaseSvrRec();
+                                eachObj.CaseNo = result.Tables[0].Rows[i][0].ToString();
+                                if (new MysqlDBA<CaseSvrRec>(FunctionController.CONNSTR).getDataListNoKey(eachObj).Count() > 0)
+                                {
+                                    throw new Exception("案號"+ result.Tables[0].Rows[i][0].ToString()+"重複!");
+                                }
+                            }
+                            for (int i = 3; i < dataRow.Count; i++)
+                            {
+                                rowIndex = i;
                                 string caseNo = string.Empty;
                                 string startDate = string.Empty;
                                 string signDate = string.Empty;
@@ -81,17 +106,18 @@ namespace LTCareRate.Controllers
                                 int intcaseSerialNo = Utility.Utility.getCaseSrvRecSerNo(mysqlDBA);
                                 intcaseSerialNo++;
                                 string caseSerialNo = intcaseSerialNo.ToString();
-                                caseNo = result.Tables[0].Rows[i][0].ToString();
-                                DateTime startDateTime = DateTime.Parse(formatROCDate(result.Tables[0].Rows[i][1].ToString()));
-                                startDate = (startDateTime.Year + 1911) + "-" + startDateTime.Month + "-" + startDateTime.Day;
-                                DateTime signDateTime = DateTime.Parse(formatROCDate(result.Tables[0].Rows[i][2].ToString()));
-                                signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month + "-" + signDateTime.Day;
-                                DateTime cfDateTime = DateTime.Parse(formatROCDate(result.Tables[0].Rows[i][3].ToString()));
-                                cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month + "-" + cfDateTime.Day;
-                                DateTime aToBDateTime = DateTime.Parse(formatROCDate(result.Tables[0].Rows[i][4].ToString()));
-                                aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month + "-" + aToBDateTime.Day;
-                                DateTime firstSvrDateTime = DateTime.Parse(formatROCDate(result.Tables[0].Rows[i][5].ToString()));
-                                firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month + "-" + firstSvrDateTime.Day;
+                                colIndex = 0;
+                                caseNo = result.Tables[0].Rows[i][colIndex].ToString(); colIndex++;
+                                DateTime startDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                startDate = (startDateTime.Year + 1911) + "-" + startDateTime.Month.ToString("00") + "-" + startDateTime.Day.ToString("00");
+                                DateTime signDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month.ToString("00") + "-" + signDateTime.Day.ToString("00");
+                                DateTime cfDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month.ToString("00") + "-" + cfDateTime.Day.ToString("00");
+                                DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
+                                DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
                                 eachObj.Year = year;
                                 eachObj.INSTNO = INSTNO;
                                 eachObj.CaseSerNo = int.Parse(caseSerialNo);
@@ -118,22 +144,20 @@ namespace LTCareRate.Controllers
                     return RedirectToAction("Index", "CaseListCount", null);
                 }
             }
+            catch (FormatException ex1)
+            {
+                Log.Error(ex1+ex1.StackTrace);
+                TempData["action"] = "Function";
+                TempData["error"] = "檔案格式錯誤，在第"+rowIndex+"列第"+colIndex+"欄";
+                return RedirectToAction("Index", "CaseListCount", null);
+            }
             catch (Exception ex)
             {
                 Log.Error(ex + ex.StackTrace);
                 TempData["action"] = "Function";
                 TempData["error"] = ex + ex.StackTrace;
-                //if (workbook != null)
-                //    workbook.Close();
-                //if (app != null)
-                //    app.Quit();
-                //tran.Rollback();
                 return RedirectToAction("Index", "CaseListCount", null);
             }
-            //if (workbook != null)
-            //    workbook.Close();
-            //if (app != null)
-            //    app.Quit();
             return RedirectToAction("Index", "CaseListCount");
         }
 
@@ -147,8 +171,6 @@ namespace LTCareRate.Controllers
         [HttpPost]
         public ActionResult UploadCaseCount(HttpPostedFileBase file_input_count)
         {
-            //Microsoft.Office.Interop.Excel._Application app = null;
-            //Microsoft.Office.Interop.Excel._Workbook workbook = null;
             DataSet result;
             DataRowCollection dataRow;
             DataColumnCollection dataColumn;
@@ -196,10 +218,10 @@ namespace LTCareRate.Controllers
                                 int j = 1;
                                 try
                                 {
-                                    //caseSvr.OldCaseNum = int.Parse(result.Tables[0].Rows[i][1].ToString());//2020-09-01 OldCaseNum不使用
+                                    caseSvr.OldCaseNum = int.Parse(result.Tables[0].Rows[i][j].ToString());//2020-09-01 OldCaseNum不使用
                                     //2020-09-01 Svr01CaseRenum --> 新案複評量, Svr02CaseRenum --> A單位計畫複評量
-                                    caseSvr.Svr01CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
-                                    caseSvr.Svr02CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    //caseSvr.Svr01CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    //caseSvr.Svr02CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
                                     //2020-09-01 Svr01CaseRenum --> 新案複評量, Svr02CaseRenum --> A單位計畫複評量
                                     caseSvr.TraceCaseTotal = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
                                     caseSvr.MultSvrCaseNum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
@@ -217,40 +239,11 @@ namespace LTCareRate.Controllers
                             }
                         }
                     }
+                    Dictionary<string, string> param1 = new Dictionary<string, string>();
+                    param1.Add("EvalYear", (DateTime.Now.Year - 1911).ToString());
+                    param1.Add("UnitAInstNo", Session["INSTNO"].ToString());
+                    mysqlDBA.ExecuteProcedure("UpdateNewCaseSvr", param1);
                     TempData["success"] = "OK";
-                    // creating Excel Application  
-                    //app = new Microsoft.Office.Interop.Excel.Application();
-                    //workbook = app.Workbooks.Open(path, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-                    //Microsoft.Office.Interop.Excel._Worksheet worksheet = workbook.ActiveSheet;
-                    //Microsoft.Office.Interop.Excel.Range rng = worksheet.UsedRange;
-                    //for (int i = 2; i <= rng.Rows.Count; i++)
-                    //{
-                    //    caseSvr = new CaseSvr();
-                    //    caseSvr.Year = (DateTime.Now.Year - 1911).ToString();
-                    //    if (string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                    //    {
-                    //        TempData["SessionExipred"] = "true";
-                    //        return RedirectToAction("Index", "Login", null);
-                    //    }
-                    //    caseSvr.INSTNO = Session["INSTNO"].ToString();
-                    //    caseSvr.YM = worksheet.Cells[i, 1].Text;
-                    //    try
-                    //    {
-                    //        caseSvr.OldCaseNum = int.Parse(worksheet.Cells[i, 2].Text);
-                    //        caseSvr.TraceCaseTotal = int.Parse(worksheet.Cells[i, 3].Text);
-                    //        caseSvr.MultSvrCaseNum = int.Parse(worksheet.Cells[i, 4].Text);
-                    //        caseSvr.SelfReferral = int.Parse(worksheet.Cells[i, 5].Text);
-                    //        caseSvr.FullPeoNum = int.Parse(worksheet.Cells[i, 6].Text);
-                    //        caseSvr.PartPeoNum = int.Parse(worksheet.Cells[i, 7].Text);
-                    //        caseSvr.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
-                    //    }
-                    //    catch (FormatException ex)
-                    //    {
-                    //        throw new Exception("數字格式錯誤!在第" + i + "列");
-                    //    }
-                    //    mysqlDBA.InsertOrUpdate(caseSvr);
-                    //}
-
                 }
             }
             catch (Exception ex)
@@ -258,17 +251,8 @@ namespace LTCareRate.Controllers
                 Log.Error(ex + ex.StackTrace);
                 TempData["action"] = "Function";
                 TempData["error"] = ex + ex.StackTrace;
-                //if (workbook != null)
-                //    workbook.Close();
-                //if (app != null)
-                //    app.Quit();
-                //tran.Rollback();
                 return RedirectToAction("Index", "CaseListCount", null);
             }
-            //if (workbook != null)
-            //    workbook.Close();
-            //if (app != null)
-            //    app.Quit();
             return RedirectToAction("Index", "CaseListCount");
         }
 
