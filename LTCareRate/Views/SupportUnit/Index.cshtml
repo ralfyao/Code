@@ -21,24 +21,25 @@
                     </h6>
                 </a>
                 <ul class="list-group list-group-horizontal flex-wrap mt-4 active-red mb-5">
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("基本資料", "Index", "Function")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("人力配置", "Index", "HR")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("自評表", "Index", "SelfRate")
-                    </li>
+                    @RenderPage("~/Views/Shared/Navigation.cshtml")
                     @*<li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("登出", "Index", "LogOut")
-                    </li>*@
+            @Html.ActionLink("基本資料", "Index", "Function")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("人力配置", "Index", "HR")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("自評表", "Index", "SelfRate")
+        </li>*@
+                    @*<li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("登出", "Index", "LogOut")
+        </li>*@
                 </ul>
             </div><!--12-->
         </div><!--row-->

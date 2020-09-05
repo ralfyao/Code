@@ -21,21 +21,22 @@
                     </h6>
                 </a>
                 <ul class="list-group list-group-horizontal flex-wrap mt-4 active-red mb-5">
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("基本資料", "Index", "Function")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("人力配置", "Index", "HR")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("自評表", "Index", "SelfRate")
-                    </li>
+                    @RenderPage("~/Views/Shared/Navigation.cshtml")
+                    @*<li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("基本資料", "Index", "Function")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("人力配置", "Index", "HR")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("自評表", "Index", "SelfRate")
+        </li>*@
                 </ul>
             </div><!--12-->
         </div><!--row-->
@@ -49,48 +50,77 @@
             <form runat="server" class="gw process-form" id="form1" method="post" action="/HR/Index">
                 <fieldset class="pb-2">
                     <div class="table-wrap pb-0">
-                        <h5 class="h5 font-weight-bold text-success mb-2">人力配置清單</h5><a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"HRAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>
-                        <table class="table table-bordered table-striped mb-0 table-hover">
-                            <thead class="text-center">
-                                <tr class="font-weight-bold">
-                                    <th>操作</th>
-                                    <th>人力類別</th>
-                                    <th>專業背景</th>
-                                    <th>專任人數</th>
-                                    <th>兼任人數</th>
-                                    <th>合計</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-                                @{
-                                    PagedList.IPagedList<HRAlloc> hRAllocs = Model.hrDataList;
-                                    List<CodeBase> codeBaseList = (List<CodeBase>)TempData["CodeBase"];
-                                }
-                                @foreach (HRAlloc alloc in hRAllocs)
-                                {
-                                    string JobType = Utility.getCodeBaseText(codeBaseList, "HRAlloc", "JobType", alloc.JobType);
-                                    string ProfBack = Utility.getCodeBaseText(codeBaseList, "HRAlloc", "ProfBack", alloc.PROBG);
-                                    int sum = alloc.FullTimeNum + alloc.PartTimeNum;
-                                    <tr class="k-grid">
-                                        <td>
-                                            <a href="javascript:void(0)" onclick="window.open('@Url.Action("Edit", "HR", new { year=alloc.Year, INSTNO=alloc.INSTNO, HRAllocSerNo = alloc.HRAllocSerNo })', '', 'width=700,height=500');"><img src="~/images/Edit.png" width="30" height="30" /></a>
-                                            <a href="javascript:void(0)" onclick="if (confirm('您是否刪除此筆資料')) { window.open('@Url.Action("Delete", "HR", new { year=alloc.Year, INSTNO=alloc.INSTNO, HRAllocSerNo = alloc.HRAllocSerNo })', '', 'width=500,height=500'); }"><img src="~/images/delete.png" width="30" height="30" /></a>
-                                        </td>
-                                        <td>@JobType</td>
-                                        <td>@ProfBack</td>
-                                        <td>@alloc.FullTimeNum</td>
-                                        <td>@alloc.PartTimeNum</td>
-                                        <td class="text-muted">@sum</td>
-                                    </tr>
-                                }
-                            </tbody>
-
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    <h5 class="h5 font-weight-bold text-success mb-2">人力配置清單</h5>
+                                </td>
+                                <td>
+                                    <div class="col-xl-7 col-md-6 col-sm-6 mb-4">
+                                        <div class="input-group input-group-lg">
+                                            <table>
+                                                <tr>
+                                                    <td><label for="YearLeaveCnt" class="mb-1 order-0 w-20">年離職人數</label></td>
+                                                    <td><label for="YearStartCnt" class="mb-1 order-0 w-20">年初個管人數</label></td>
+                                                    <td><label for="RateAddCnt" class="mb-1 order-0 w-20">年增加登錄個管人數</label></td>
+                                                </tr>
+                                                <tr>
+                                                    @{
+                                                        var startYear = (DateTime.Now.Year - 1911 - 1).ToString(); 
+                                                        var endYear = (DateTime.Now.Year - 1911).ToString(); 
+                                                    }
+                                                    <td><input type="text" class="form-control  order-3" id="YearLeaveCnt" name="YearLeaveCnt" value="@Model.YearLeaveCnt" title="@startYear 年1月~@endYear 年5月31日離職人數"></td>
+                                                    <td><input type="text" class="form-control  order-3" id="YearStartCnt" name="YearStartCnt" value="@Model.YearStartCnt" title="@startYear 年1月個管人數"></td>
+                                                    <td><input type="text" class="form-control  order-3" id="RateAddCnt" name="RateAddCnt" value="@Model.RateAddCnt" title="@startYear 年2月~@endYear 年5月增加登錄個管人數"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         </table>
-                        <div class="pager">
-                            @Html.Pager(Model.hrDataList.PageSize, Model.hrDataList.PageNumber, Model.hrDataList.TotalItemCount)
+                            <a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"HRAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>
+                            <table class="table table-bordered table-striped mb-0 table-hover">
+                                <thead class="text-center">
+                                    <tr class="font-weight-bold">
+                                        <th>操作</th>
+                                        <th>人力類別</th>
+                                        <th>專業背景</th>
+                                        <th>專任人數</th>
+                                        <th>兼任人數</th>
+                                        <th>合計</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    @{
+                                        PagedList.IPagedList<HRAlloc> hRAllocs = Model.hrDataList;
+                                                                List<CodeBase> codeBaseList = (List<CodeBase>)TempData["CodeBase"];
+                                                            }
+                                                            @foreach (HRAlloc alloc in hRAllocs)
+                                                            {
+                                                                string JobType = Utility.getCodeBaseText(codeBaseList, "HRAlloc", "JobType", alloc.JobType);
+                                                                string ProfBack = Utility.getCodeBaseText(codeBaseList, "HRAlloc", "ProfBack", alloc.PROBG);
+                                                                int sum = alloc.FullTimeNum + alloc.PartTimeNum;
+                                        <tr class="k-grid">
+                                            <td>
+                                                <a href="javascript:void(0)" onclick="window.open('@Url.Action("Edit", "HR", new { year=alloc.Year, INSTNO=alloc.INSTNO, HRAllocSerNo = alloc.HRAllocSerNo })', '', 'width=700,height=500');"><img src="~/images/Edit.png" width="30" height="30" /></a>
+                                                <a href="javascript:void(0)" onclick="if (confirm('您是否刪除此筆資料')) { window.open('@Url.Action("Delete", "HR", new { year=alloc.Year, INSTNO=alloc.INSTNO, HRAllocSerNo = alloc.HRAllocSerNo })', '', 'width=500,height=500'); }"><img src="~/images/delete.png" width="30" height="30" /></a>
+                                            </td>
+                                            <td>@JobType</td>
+                                            <td>@ProfBack</td>
+                                            <td>@alloc.FullTimeNum</td>
+                                            <td>@alloc.PartTimeNum</td>
+                                            <td class="text-muted">@sum</td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                            <div class="pager">
+                                @Html.Pager(Model.hrDataList.PageSize, Model.hrDataList.PageNumber, Model.hrDataList.TotalItemCount)
+                            </div>
                         </div>
-                    </div>
-                </fieldset>
+                    </fieldset>
                 <div class="col-12 text-left">
                     @*<a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"HRAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>*@
                     @*@Html.ActionLink("新增一筆資料", "Index", "HRAdd", null, new { @onclick="window.open('http://www.googlecom.tw')" })*@

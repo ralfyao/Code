@@ -131,6 +131,18 @@ namespace LTCareRate.Controllers
                             obj._03UpCasePer = eff.UpCasePer;
                         }
                     }
+                    //社區資源網絡會議
+                    List<UnitAMeeting> lstCommResMeeting = (List<UnitAMeeting>)new MysqlDBA<UnitAMeeting>(FunctionController.CONNSTR).getDataListNoKey(
+                        new UnitAMeeting() { INSTNO = Session["INSTNO"].ToString(), MType = "1"}
+                        );
+                    lstCommResMeeting.ForEach(o => o.MDate = Utility.Utility.convertUDT2ROCDateFormat(o.MDate));
+                    basicData.commResMeeting = lstCommResMeeting;
+                    //區域跨專業個案討論會
+                    List<UnitAMeeting> lstAreaProfMeeting = (List<UnitAMeeting>)new MysqlDBA<UnitAMeeting>(FunctionController.CONNSTR).getDataListNoKey(
+                        new UnitAMeeting() { INSTNO = Session["INSTNO"].ToString(), MType = "2" }
+                        );
+                    lstAreaProfMeeting.ForEach(o => o.MDate = Utility.Utility.convertUDT2ROCDateFormat(o.MDate));
+                    basicData.areaProfMeeting = lstAreaProfMeeting;
                 }
             }
             catch (Exception ex)

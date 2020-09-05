@@ -33,21 +33,22 @@
                     </h6>
                 </a>
                 <ul class="list-group list-group-horizontal flex-wrap mt-4 active-red mb-5">
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("基本資料", "Index", "Function")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("人力配置", "Index", "HR")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("自評表", "Index", "SelfRate")
-                    </li>
+                    @RenderPage("~/Views/Shared/Navigation.cshtml")
+                    @*<li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("基本資料", "Index", "Function")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("人力配置", "Index", "HR")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("自評表", "Index", "SelfRate")
+        </li>*@
                 </ul>
             </div><!--12-->
         </div><!--row-->
@@ -69,7 +70,8 @@
                                         <input type="file" class="form-control-file d-inline-block" id="file_input_list" name="file_input_list" value="" hidden="hidden">
                                         @*<label for="file_input_list" class="pl-3 mb-0 mr-sm-2 mr-xx-0 file-input-trigger">選擇檔案 <i class="icon-upload"></i></label>*@
                                     </div><!--fille-container-->
-                                    @Html.ActionLink("個案清冊上傳格式下載", "CaseList", "DownLoad")
+                                    [@Html.ActionLink("個案清冊上傳格式下載", "CaseList", "DownLoad")]
+                                    [@Html.ActionLink("個案清冊上傳格式範例下載", "CaseListExample", "DownLoad")]
                                 </div><!--6-->
                                 <div class="col-md-4 col-sm-4 col-xs-5 col-xx-12 mt-xx-3 text-xs-left text-xx-center">
                                     <input type="submit" class="btn btn-teal rounded-0" value="開始上傳" />
@@ -91,10 +93,11 @@
                                 <div class="file-upload-container justify-content-sm-start justify-content-xx-center">
                                     <input type="file" class="form-control-file d-inline-block" id="file_input_count" name="file_input_count" value="" hidden="hidden">
                                     @*<label for="file_input_count" class="pl-3 mb-0 mr-sm-2 mr-xx-0 file-input-trigger">選擇檔案 <i class="icon-upload"></i></label>
-                                      <p id="countFileName" class="file-name col-sm-auto col-xx-12">未選擇任何檔案</p>*@
+            <p id="countFileName" class="file-name col-sm-auto col-xx-12">未選擇任何檔案</p>*@
                                 </div><!--fille-container-->
-                                        @Html.ActionLink("個案服務量上傳格式下載", "CaseCount", "DownLoad")
-                                    </div><!--6-->
+                                [@Html.ActionLink("個案服務量上傳格式下載", "CaseCount", "DownLoad")]
+                                [@Html.ActionLink("個案服務量上傳格式範例下載", "CaseCountExample", "DownLoad")]
+                            </div><!--6-->
                                     <div class="col-md-4 col-sm-4 col-xs-5 col-xx-12 mt-xx-3 text-xs-left text-xx-center">
                                         <input type="submit" class="btn btn-teal rounded-0" value="開始上傳"/>
                                     </div><!--auto-->

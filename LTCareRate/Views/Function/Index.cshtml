@@ -20,21 +20,22 @@
                     </h6>
                 </a>
                 <ul class="list-group list-group-horizontal flex-wrap mt-4 active-red mb-5">
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("基本資料", "Index", "Function")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("人力配置", "Index", "HR")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
-                    </li>
-                    <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
-                        @Html.ActionLink("自評表", "Index", "SelfRate")
-                    </li>
+                    @RenderPage("~/Views/Shared/Navigation.cshtml")
+                    @*<li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("基本資料", "Index", "Function")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("人力配置", "Index", "HR")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
+        </li>
+        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+            @Html.ActionLink("自評表", "Index", "SelfRate")
+        </li>*@
                 </ul>
             </div><!--12-->
         </div><!--row-->
@@ -53,7 +54,7 @@
                             <div class="row">
                                 <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
                                     <div class="input-group input-group-lg">
-                                        <input type="text" class="form-control order-3" id="INSTName" name="INSTName" value="@Model.INSTName" required>
+                                        <input type="text" class="form-control order-3" id="INSTName" name="INSTName" value="@Model.INSTName" required readonly>
                                         <label for="INSTName" class="mb-1 order-0 w-30">單位名稱</label>
                                     </div>
                                 </div>
@@ -75,13 +76,13 @@
                                     <option value="">請選擇</option>
                                     @foreach (CityBase obj in ViewBag.city)
                                     {
-                                        if (obj.CityName == Model.city)
+                                        if (obj.CityCode == Model.city)
                                         {
-                                            <option value="@obj.CityName" selected>@obj.CityName</option>
+                                            <option value="@obj.CityCode" selected>@obj.CityName</option>
                                         }
                                         else
                                         {
-                                            <option value="@obj.CityName">@obj.CityName</option>
+                                            <option value="@obj.CityCode">@obj.CityName</option>
                                         }
                                     }
                                 </select>
@@ -89,13 +90,13 @@
                                     <option value="">請選擇</option>
                                     @foreach (AreaBase obj in ViewBag.area)
                                     {
-                                        if (obj.AreaName == Model.area)
+                                        if (obj.AreaCode == Model.area)
                                         {
-                                            <option value="@obj.AreaName" selected>@obj.AreaName</option>
+                                            <option value="@obj.AreaCode" selected>@obj.AreaName</option>
                                         }
                                         else
                                         {
-                                            <option value="@obj.AreaName">@obj.AreaName</option>
+                                            <option value="@obj.AreaCode">@obj.AreaName</option>
                                         }
                                     }
                                 </select>
@@ -113,7 +114,20 @@
                     <div class="row">
                         <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
                             <div class="input-group input-group-lg align-items-center">
-                                <input type="text" class="form-control order-3" id="AttrMed" name="AttrMed" value="@Model.AttrMed" required>
+                                <select name="AttrMed" id="AttrMed" class="form-control order-2 col-sm-4 col-xs-4 mb-xs-0 mb-xx-3" size="1" required>
+                                    @foreach (AttrBase baseAttr in Model.AttrMedList)
+                                    {
+                                        if (baseAttr.AttrCode == Model.AttrMed)
+                                        {
+                                            <option value="@baseAttr.AttrCode" selected>@baseAttr.AttrName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@baseAttr.AttrCode">@baseAttr.AttrName</option>
+                                        }
+                                    }
+                                </select>
+                                @*<input type="text" class="form-control order-3" id="AttrMed" name="AttrMed" value="@Model.AttrMed" required>*@
                                 <label for="name" class="mb-1 order-0 w-30">醫事機構</label>
                             </div>
                         </div>
@@ -121,14 +135,40 @@
                         </div>
                         <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
                             <div class="input-group input-group-lg align-items-center">
-                                <input type="text" class="form-control order-3" id="AttrLC" name="AttrLC" value="@Model.AttrLC" required>
-                                <label for="name" class="mb-1 order-0 w-30">長照機構</label>
+                                @*<select name="AttrLC" id="AttrLC" class="form-control order-2 col-sm-4 col-xs-5 mb-xs-0 mb-xx-3" size="1" required hidden="hidden">
+                                    @foreach (AttrBase baseAttr in Model.AttrLCList)
+                                    {
+                                        if (baseAttr.AttrCode == Model.AttrLC)
+                                        {
+                                            <option value="@baseAttr.AttrCode" selected>@baseAttr.AttrName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@baseAttr.AttrCode">@baseAttr.AttrName</option>
+                                        }
+                                    }
+                                </select>*@
+                                @*<input type="text" class="form-control order-3" id="AttrLC" name="AttrLC" value="@Model.AttrLC" required>*@
+                                @*<label for="name" class="mb-1 order-0 w-30" hidden="hidden">長照機構</label>*@
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-6 mb-md-4 mb-xx-3">
                             <div class="input-group input-group-lg align-items-center">
-                                <input type="text" class="form-control order-3" id="AttrOther" name="AttrOther" value="@Model.AttrOther" required>
-                                <label for="name" class="mb-1 order-0 w-30">其他</label>
+                                @*<select name="AttrOther" id="AttrOther" class="form-control order-2 col-sm-4 col-xs-4 mb-xs-0 mb-xx-3" size="1" required hidden="hidden">
+                                    @foreach (AttrBase baseAttr in Model.AttrOtherList)
+                                    {
+                                        if (baseAttr.AttrCode == Model.AttrOther)
+                                        {
+                                            <option value="@baseAttr.AttrCode" selected>@baseAttr.AttrName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@baseAttr.AttrCode">@baseAttr.AttrName</option>
+                                        }
+                                    }
+                                </select>*@
+                                @*<input type="text" class="form-control order-3" id="AttrOther" name="AttrOther" value="@Model.AttrOther" required>*@
+                                @*<label for="name" class="mb-1 order-0 w-30" hidden="hidden">其他</label>*@
                             </div>
                         </div>
                     </div>

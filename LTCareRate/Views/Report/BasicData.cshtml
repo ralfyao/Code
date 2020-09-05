@@ -1,6 +1,5 @@
 ﻿@using LongtermCare.DataModel.LongtermCare.DataModel
 @using LTCareRate.Models.DataModel
-@using LTCareRate.Models.DataModel
 @using LTCareRate.Utility
 @{
     ViewBag.Title = "BasicData";
@@ -71,6 +70,7 @@
                     <tr>
                         <td class="bg-darkgrey" nowrap="nowrap">(八)人力配置：</td>
                         <td colspan="3">
+                            年離職人數：@Model.ResignNum &nbsp;&nbsp;&nbsp;年初個管人數：@Model.CMDBegYearNum &nbsp;&nbsp;&nbsp; 評鑑期間增加個管人數：@Model.CMDPeriodAddNum
                             <table border="1" cellspacing="0">
                                 <thead>
                                     <tr>
@@ -137,12 +137,15 @@
                                             兼職<br />
                                             A個管員
                                         </td>
-                                        <td class="bg-darkgrey" nowrap="nowrap">
-                                            平均每個<br />
-                                            專職個管員<br />
-                                            每月服務量
-                                        </td>
-                                    </tr>
+                                        @if (Session["userRole"].ToString() == "2")
+                                        {
+                                            <td class="bg-darkgrey" nowrap="nowrap">
+                                                平均每個<br />
+                                                專職個管員<br />
+                                                每月服務量
+                                            </td>
+                                        }
+                                        </tr>
                                     <tr>
                                         <td class="bg-darkgrey">案量</td>
                                         <td class="bg-darkgrey">總天數</td>
@@ -153,7 +156,10 @@
                                         <td class="bg-darkgrey">案量</td>
                                         <td class="bg-darkgrey">人數</td>
                                         <td class="bg-darkgrey">人數</td>
+                                        @if (Session["userRole"].ToString() == "2")
+                                        {
                                         <td class="bg-darkgrey">平均每月服務量</td>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -165,14 +171,14 @@
                                     }
                                     @foreach (var item in Model.caseSvrs)
                                     {
-                                        int.TryParse(item.Svr01CaseRenum == null ? "" : item.Svr01CaseRenum.ToString(), out NewCaseReNum);
-                                    <tr>
+                                        //int.TryParse(item.Svr01CaseRenum == null ? "" : item.Svr01CaseRenum.ToString(), out NewCaseReNum);
+                                        <tr>
                                         <td rowspan="@rowspan">@item.YM</td>
                                         @foreach (CodeBase itemCode in lstCaseSvrEFF)
                                         {
                                             <td height="0"></td>
                                         }
-                                        <td height="0"></td>
+                                        <td rowspan="@rowspan">@item.OldCaseNum</td>
                                         <td rowspan="@rowspan">@item.TraceCaseTotal</td>
                                         @foreach (CodeBase itemCode in lstCaseSvrEFF)
                                         {
@@ -193,37 +199,41 @@
                                         <td rowspan="@rowspan">@item.SelfReferral</td>
                                         <td rowspan="@rowspan">@item.FullPeoNum</td>
                                         <td rowspan="@rowspan">@item.PartPeoNum</td>
-                                    </tr>
+                                        @if (Session["userRole"].ToString() == "2")
+                                        {
+                                            <td></td>
+                                        }
+                                        </tr>
                                             foreach (CodeBase itemCode in lstCaseSvrEFF)
                                             {
                                                 var lsst = from cc in Model.caseSvrsEff
                                                            where cc.YM == item.YM
                                                            select cc;
                                                 List<CaseSvrEff> objSrvEffLst = (List<CaseSvrEff>)lsst.ToList();//Utility.getCaseSvrEff((DateTime.Now.Year - 1911).ToString(), item.YM, Session["INSTNO"].ToString(), itemCode.CodeValue);
-                                            <tr>
-                                                <td>@itemCode.CodeText</td>
-                                                @if (objSrvEffLst.Count > 0)
-                                                {
-                                                    int num = 0;
-                                                    if (itemCode.CodeValue == "01")
-                                                    {
-                                                        int.TryParse(item.Svr01CaseRenum == null ? "" : item.Svr01CaseRenum.ToString(), out num);
-                                                    }
-                                                    if (itemCode.CodeValue == "02")
-                                                    {
-                                                        int.TryParse(item.Svr02CaseRenum == null ? "" : item.Svr02CaseRenum.ToString(), out num);
-                                                    }
-                                                    if (itemCode.CodeValue == "03")
-                                                    {
-                                                        int.TryParse(item.Svr03CaseRenum == null ? "" : item.Svr03CaseRenum.ToString(), out num);
-                                                    }
-                                                    <text>
-                                                    <td>@objSrvEffLst[0].CaseUpNum</td>
-                                                    <td>@objSrvEffLst[0].CaseDays</td>
-                                                    <td>@num</td>
-                                                    </text>
-                                                }
-                                            </tr>
+                                        <tr>
+                                            <td>@itemCode.CodeText</td>
+                                            @if (objSrvEffLst.Count > 0)
+                                            {
+                                                //int num = 0;
+                                                //if (itemCode.CodeValue == "01")
+                                                //{
+                                                //    int.TryParse(item.OldCaseNum == null ? "" : item.OldCaseNum.ToString(), out num);
+                                                //}
+                                                //if (itemCode.CodeValue == "02")
+                                                //{
+                                                //    int.TryParse(item.Svr02CaseRenum == null ? "" : item.Svr02CaseRenum.ToString(), out num);
+                                                //}
+                                                //if (itemCode.CodeValue == "03")
+                                                //{
+                                                //    int.TryParse(item.Svr03CaseRenum == null ? "" : item.Svr03CaseRenum.ToString(), out num);
+                                                //}
+                                                <text>
+                                                <td>@objSrvEffLst[0].CaseUpNum</td>
+                                                <td>@objSrvEffLst[0].CaseDays</td>
+                                                @*<td rowspan="4">@num</td>*@
+                                                </text>
+                                            }
+                                        </tr>
                                                 }
                                             }
                                 </tbody>
@@ -237,6 +247,70 @@
                         <td colspan="3">
                             <table border="1" cellspacing="0">
                                 <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey">時間</td>
+                                        @{ Model.caseSvrsEffView = (List<LTCareRate.Models.ViewModel.CaseSvrEffView>)Model.caseSvrsEffView.OrderBy(p => p.YM).ToList();}
+                                        @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
+                                        {
+                                            <td class="bg-darkgrey">@eff.YM</td>
+                                        }
+                                        <td class="bg-darkgrey">總計</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ List<CodeBase> CodeList = (List<CodeBase>)(from item in lstCaseSvrEFF where item.CodeValue == "01" select item).ToList();}
+                                    @foreach (CodeBase itemCode in CodeList)
+                                    {
+                                        decimal? sum01 = 0;
+                                        <tr>
+                                            <td class="bg-darkgrey" nowrap="nowrap">@itemCode.CodeText</td>
+                                            @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
+                                            {
+                                                //if (eff.SvrType == "01")
+                                                {
+                                                    <td nowrap="nowrap">@(eff._01UpAvgDays != null ? Decimal.ToInt32((decimal)eff._01UpAvgDays) : 0)</td>
+                                                }
+                                                sum01 += (eff._01UpAvgDays == null ? 0 : eff._01UpAvgDays);
+                                            }
+                                            <td nowrap="nowrap">@Decimal.ToInt32((decimal)@sum01)</td>
+                                        </tr>
+                                    }
+                                    @{ CodeList = (List<CodeBase>)(from item in lstCaseSvrEFF where item.CodeValue == "02" select item).ToList();}
+                                    @foreach (CodeBase itemCode in CodeList)
+                                    {
+                                        decimal? sum02 = 0;
+                                        <tr>
+                                            <td class="bg-darkgrey" nowrap="nowrap">@itemCode.CodeText</td>
+                                            @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
+                                            {
+                                                //if (eff.SvrType == "02")
+                                                {
+                                                    <td nowrap="nowrap">@(eff._02UpCasePer != null ? Math.Round(Decimal.ToDouble((decimal)eff._02UpCasePer), 2) : 0) %</td>
+                                                }
+                                                sum02 += (eff._02UpCasePer == null ? 0 : eff._02UpCasePer);
+                                            }
+                                            <td nowrap="nowrap">@Math.Round(Decimal.ToDouble((decimal)sum02), 2) %</td>
+                                        </tr>
+                                    }
+                                    @{ CodeList = (List<CodeBase>)(from item in lstCaseSvrEFF where item.CodeValue == "03" select item).ToList();}
+                                    @foreach (CodeBase itemCode in CodeList)
+                                    {
+                                        decimal? sum03 = 0;
+                                        <tr>
+                                            <td class="bg-darkgrey" nowrap="nowrap">@itemCode.CodeText</td>
+                                            @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
+                                            {
+                                                //if (eff.SvrType == "03")
+                                                {
+                                                    <td nowrap="nowrap">@(eff._03UpCasePer != null ? Math.Round(Decimal.ToDouble((decimal)eff._03UpCasePer), 2) : 0) %</td>
+                                                }
+                                                sum03 += (eff._03UpCasePer == null ? 0 : eff._03UpCasePer);
+                                            }
+                                            <td nowrap="nowrap">@Math.Round(Decimal.ToDouble((decimal)sum03), 2) %</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                @*<thead>
                                     <tr>
                                         <td class="bg-darkgrey">時間</td>
                                         @foreach (CodeBase itemCode in lstCaseSvrEFF)
@@ -268,7 +342,7 @@
                                         <td>@sumUpCasePer02</td>
                                         <td>@sumUpCasePer03</td>
                                     </tr>
-                                </tbody>
+                                </tbody>*@
                             </table>
                         </td>
                     </tr>
@@ -299,6 +373,55 @@
                                             <td>
                                                 @item.TrCaseNum
                                             </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bg-darkgrey" nowrap="nowrap">
+                            (十二)社區暨跨專業整合現況
+                        </td>
+                        <td colspan="3">
+                            社區資源網絡會議
+                            <table border="1" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey">會議時間</td>
+                                        <td class="bg-darkgrey">討論議題</td>
+                                        <td class="bg-darkgrey">與會單位數</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (UnitAMeeting aMeeting in Model.commResMeeting)
+                                    {
+                                        <tr>
+                                            <td>@aMeeting.MDate</td>
+                                            <td>@aMeeting.Topic</td>
+                                            <td>@aMeeting.AttendNum</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            區域跨專業個案討論會
+                            <table border="1" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <td class="bg-darkgrey">會議時間</td>
+                                        <td class="bg-darkgrey">討論個案議題</td>
+                                        <td class="bg-darkgrey">幾種專業人員參加</td>
+                                        <td class="bg-darkgrey">與會專業人員數</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (UnitAMeeting aMeeting in Model.areaProfMeeting)
+                                    {
+                                        <tr>
+                                            <td>@aMeeting.MDate</td>
+                                            <td>@aMeeting.Topic</td>
+                                            <td>@aMeeting.ProfCnt</td>
+                                            <td>@aMeeting.AttendNum</td>
                                         </tr>
                                     }
                                 </tbody>

@@ -46,5 +46,8 @@ namespace LTCareRate.Models.ViewModel
         public List<AttrBase> AttrMedList { get; set; } = new List<AttrBase>();
         public List<AttrBase> AttrLCList { get; set; } = new List<AttrBase>();
         public List<AttrBase> AttrOtherList { get; set; } = new List<AttrBase>();
+        public List<UnitAMeeting> commResMeeting { get; set; } = new List<UnitAMeeting>();
+        public List<UnitAMeeting> areaProfMeeting { get; set; } = new List<UnitAMeeting>();
+
     }
 }

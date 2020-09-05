@@ -37,20 +37,20 @@
                                 <input type="hidden" value="@hR.HRAllocSerNo" id="HRAllocSerNo1" name="HRAllocSerNo1"/>
                                 @if (hR.JobType == "1")
                                 {
-                                    <input type="radio" class="order-0 mr-1" name="personadmin" checked id="personadmin" value="1" required>
+                                    <input type="radio" class="order-0 mr-1" name="personadmin" checked id="personadmin" value="1" required">
                                 }
                                 else
                                 {
-                                    <input type="radio" class="order-0 mr-1" name="personadmin" id="personadmin" value="1" required>
+                                    <input type="radio" class="order-0 mr-1" name="personadmin" id="personadmin" value="1" required">
                                 }
                                 <label for="personadmin" class="mb-1 order-1">個管人員</label>
                                 @if (hR.JobType == "2")
                                 {
-                                    <input type="radio" class="order-0 mr-1" name="personadmin" checked id="personadmin" value="2" required>
+                                    <input type="radio" class="order-0 mr-1" name="personadmin" checked id="personadmin" value="2" required">
                                 }
                                 else
                                 {
-                                    <input type="radio" class="order-0 mr-1" name="personadmin" id="personadmin" value="2" required>
+                                    <input type="radio" class="order-0 mr-1" name="personadmin" id="personadmin" value="2" required">
                                 }
                                 <label for="personadmin" class="mb-1 order-1">行政人員</label>
                             </div>
@@ -59,7 +59,7 @@
                             <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
                                     @*<input type="text" class="form-control order-3" id="ProfBack" name="ProfBack" valur="" required>*@
-                                    <select id="ProfBackSelect" name="ProfBackSelect" class="form-control order-3" required>
+                                    <select id="ProfBackSelect" name="ProfBackSelect" class="form-control order-3">
                                         @foreach (CodeBase obj in codeBaseLst)
                                         {
                                             if (obj.CodeTable == "HRAlloc" && obj.CodeField == "ProfBack")

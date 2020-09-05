@@ -1,0 +1,112 @@
+﻿@using LTCareRate.Models.DataModel;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model LTCareRate.Models.ViewModel.MeetingView
+<div class="row justify-content-lg-between justify-content-xx-center">
+    <div class="col-xl-3 col-lg-3 col-md-11 pr-xl-5 pr-lg-0 mb-4">
+        <div class="row justify-content-md-between justify-content-xx-center">
+            <div class="col-lg-12 mb-4">
+                <div class="gw"></div>
+                <a class="media w-100 flex-wrap icon-link-set" href="#0">
+                    <span class="sprite size--60">
+                        <!--這裡放圖片，60px * 60px-->
+                        <img src="images/spearker-1.png" alt="">
+                    </span>
+                    <h6 class="align-self-center">
+                        評鑑作業
+                    </h6>
+                </a>
+                <ul class="list-group list-group-horizontal flex-wrap mt-4 active-red mb-5">
+                    @RenderPage("~/Views/Shared/Navigation.cshtml")
+                    @*<li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                            @Html.ActionLink("基本資料", "Index", "Function")
+                        </li>
+                        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                            @Html.ActionLink("人力配置", "Index", "HR")
+                        </li>
+                        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                            @Html.ActionLink("個案清冊及服務量", "Index", "CaseListCount")
+                        </li>
+                        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                            @Html.ActionLink("合作提供服務單位", "Index", "SupportUnit")
+                        </li>
+                        <li class="list-group-item col-lg-12 col-sm-6 col-xx-12">
+                            @Html.ActionLink("自評表", "Index", "SelfRate")
+                        </li>*@
+                </ul>
+            </div><!--12-->
+        </div><!--row-->
+    </div><!--col3-->
+    <div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
+        <div class="gw page-list mb-4">
+            <h3 class="font-weight-bold">區域跨專業個案討論會</h3>
+        </div><!--gw-->
+
+        <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
+            <form runat="server" class="gw process-form" id="form1" method="post" action="/CaseDiscuss/Index">
+                <fieldset class="pb-2">
+                    <div class="table-wrap pb-0">
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    <h5 class="h5 font-weight-bold text-success mb-2">區域跨專業個案討論會議清單</h5>
+                                </td>
+                                <td>
+                                    <div class="col-xl-7 col-md-6 col-sm-6 mb-4">
+                                        <div class="input-group input-group-lg">
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"CaseDiscussAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>
+                        <table class="table table-bordered table-striped mb-0 table-hover">
+                            <thead class="text-center">
+                                <tr class="font-weight-bold">
+                                    <th></th>
+                                    <th>會議時間</th>
+                                    <th>討論個案議題</th>
+                                    <th>幾種專業人員參加</th>
+                                    <th>與會專業人數</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @{
+                                    PagedList.IPagedList<UnitAMeeting> hRAllocs = Model.meetingList;
+                                }
+                                @foreach (UnitAMeeting alloc in hRAllocs)
+                                {
+                                <tr class="k-grid">
+                                    <td>
+                                        <a href="javascript:void(0)" onclick="window.open('@Url.Action("Edit", "CaseDiscuss", new { MSerNo = alloc.MSerialNo })', '', 'width=700,height=500');"><img src="~/images/Edit.png" width="30" height="30" /></a>
+                                        <a href="javascript:void(0)" onclick="if (confirm('您是否刪除此筆資料')) { window.open('@Url.Action("Delete", "CaseDiscuss", new { MSerNo = alloc.MSerialNo })', '', 'width=500,height=500'); }"><img src="~/images/delete.png" width="30" height="30" /></a>
+                                    </td>
+                                    <td>@LTCareRate.Utility.Utility.convertUDT2ROCDateFormat(DateTime.Parse(alloc.MDate).ToString("MM/dd/yyyy"))</td>
+                                    <td>@alloc.Topic</td>
+                                    <td>@alloc.ProfCnt</td>
+                                    <td>@alloc.AttendNum</td>
+                                </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                        <div class="pager">
+                            @Html.Pager(Model.meetingList.PageSize, Model.meetingList.PageNumber, Model.meetingList.TotalItemCount)
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="col-12 text-left">
+                    @*<a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"HRAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>*@
+                    @*@Html.ActionLink("新增一筆資料", "Index", "HRAdd", null, new { @onclick="window.open('http://www.googlecom.tw')" })*@
+                </div>
+                <div class="col-12 text-center">
+                    <button type="reset" class="btn btn-lg btn-warning px-4" id="submit">清&emsp;&ensp;除</button>
+                    <button type="submit" class="btn btn-lg btn-success px-4" id="submit">下 一 步</button>
+                </div><!--12-->
+            </form>
+        </div>
+    </div>
+</div>

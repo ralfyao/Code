@@ -12,11 +12,11 @@
     <meta name="keywords" content="臺中市社區整合型服務中心評鑑">
     <link rel="shortcut icon" href="images/summit.ico" type="image/x-icon">
     <title>臺中市社區整合型服務中心評鑑</title>
-    <script src="Scripts/jquery-3.4.1.js"></script>
-    <script src="Scripts/jquery-3.4.1.min.js"></script>
-    <link rel="stylesheet" href="Content/bootstrap.min.css" media="screen" type="text/css">
-    <link rel="stylesheet" href="Content/layout.min.css" media="screen" type="text/css">
-    <link rel="stylesheet" href="Content/icomoon/style.min.css" media="screen" type="text/css">
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="~/Content/layout.min.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="~/Content/icomoon/style.min.css" media="screen" type="text/css">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA 058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     @RenderSection("HeadIncludes", required: false)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.0/jspdf.umd.min.js"></script>
@@ -238,7 +238,7 @@
                             <li id="25" class="nav-item active">
                                 @if (@Session["AccountNo"] != null)
                                 {
-                                    <text><div class="nav-link active">歡迎，@Session["AccountNo"].ToString()&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("登出", "Index", "LogOut")</div></text>
+                                    <text><div class="nav-link active">歡迎，@Session["AccountName"].ToString()&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("登出", "Index", "LogOut")</div></text>
                                 }
                             </li>
                         </ul>

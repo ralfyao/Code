@@ -1,0 +1,78 @@
+﻿@using LongtermCare.DataModel.LongtermCare.DataModel;
+@using LTCareRate.Models.DataModel;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_Blank.cshtml";
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_Blank.cshtml";
+    UnitAMeeting hR = new UnitAMeeting();
+    if (TempData["UnitAMeeting"] != null)
+    {
+        List<UnitAMeeting> listhalloc = (List<UnitAMeeting>)TempData["UnitAMeeting"];
+        if (listhalloc.Count > 0)
+        {
+            hR = listhalloc[0];
+        }
+        else
+        {
+            hR.MSerialNo = -1;
+        }
+    }
+    else
+    {
+        hR.MSerialNo = -1;
+    }
+}
+
+@model LTCareRate.Models.ViewModel.MeetingView
+<div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
+    <div class="gw page-list mb-4">
+        <h3 class="font-weight-bold">社區資源網絡會議 新增/修改</h3>
+    </div><!--gw-->
+    <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
+        <form runat="server" class="gw process-form" id="form1" method="post" action="/MeetingAdd/Add">
+            <input type="hidden" value="@hR.MSerialNo" id="MSerial" name="MSerial" />
+            <div class="border-top-0 bg-light py-5 px-lg-5 px-md-4 px-xx-3">
+                <div class="row">
+                    <div class="col-xx-12">
+                        <div class="row">
+                            <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    <input type="text" class="form-control order-2" value="@hR.Year" id="year" name="year" required />
+                                    <label for="year" class="mb-1 order-0 w-10">年度</label>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    <input type="text" class="form-control order-2" value="@hR.MDate" id="date" name="date" required />
+                                    <label for="date" class="mb-1 order-0 w-20">會議日期</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    @*<input type="text" class="form-control order-3" id="ProfBack" name="ProfBack" valur="" required>*@
+                                    <input type="text" value="@hR.Topic" class="form-control order-3" id="topic" name="topic" required />
+                                    <label for="topic" class="mb-1 order-0 w-20">會議議題</label>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
+                                <div class="input-group input-group-lg align-items-center">
+                                    <input type="number" class="form-control order-3" id="attend" name="attend" value="@hR.AttendNum" required>
+                                    <label for="attend" class="mb-1 order-0 w-20">與會單位/人員數</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 text-center">
+                    <button type="reset" class="btn btn-lg btn-warning px-4" id="cancel">取&emsp;&ensp;消</button>
+                    <button type="submit" class="btn btn-lg btn-success px-4" id="save">儲&emsp;&ensp;存</button>
+                </div><!--12-->
+            </div>
+        </form>
+    </div>
+</div>
+
+
