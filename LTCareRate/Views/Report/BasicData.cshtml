@@ -21,6 +21,15 @@
         font-family: DFKai-sb;
     }
 </style>
+<script type="text/javascript">
+    function print()
+    {
+        w=window.open();
+        w.document.write(document.getElementsByClassName('print')[0].innerH‌​TML);
+        w.print();
+        w.close();
+    }
+</script>
 <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light" id="print">
     <div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
         <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
@@ -174,7 +183,7 @@
                                         //int.TryParse(item.Svr01CaseRenum == null ? "" : item.Svr01CaseRenum.ToString(), out NewCaseReNum);
                                         <tr>
                                         <td rowspan="@rowspan">@item.YM</td>
-                                        @foreach (CodeBase itemCode in lstCaseSvrEFF)
+                                        @for (int i = 0; i < 3; i++)
                                         {
                                             <td height="0"></td>
                                         }
@@ -183,7 +192,7 @@
                                         @foreach (CodeBase itemCode in lstCaseSvrEFF)
                                         {
                                             var lsst = from cc in Model.caseSvrsEff
-                                                       where cc.YM == item.YM
+                                                       where cc.YM == item.YM && cc.SvrType == "01"
                                                        select cc;
                                             List<CaseSvrEff> objSrvEffLst = (List<CaseSvrEff>)lsst.ToList();
                                             if (objSrvEffLst.Count > 0)
@@ -192,7 +201,7 @@
                                             }
                                         }
                                         @{
-                                            var AccumulatedCount = item.TraceCaseTotal + NewCaseNum + NewCaseReNum;
+                                            var AccumulatedCount = item.TraceCaseTotal + NewCaseNum + item.OldCaseNum;
                                         }
                                         <td rowspan="@rowspan">@AccumulatedCount</td>
                                         <td rowspan="@rowspan">@item.MultSvrCaseNum</td>
@@ -208,32 +217,44 @@
                                             {
                                                 var lsst = from cc in Model.caseSvrsEff
                                                            where cc.YM == item.YM
+                                                           && cc.SvrType == itemCode.CodeValue
                                                            select cc;
                                                 List<CaseSvrEff> objSrvEffLst = (List<CaseSvrEff>)lsst.ToList();//Utility.getCaseSvrEff((DateTime.Now.Year - 1911).ToString(), item.YM, Session["INSTNO"].ToString(), itemCode.CodeValue);
-                                        <tr>
-                                            <td>@itemCode.CodeText</td>
-                                            @if (objSrvEffLst.Count > 0)
-                                            {
-                                                //int num = 0;
-                                                //if (itemCode.CodeValue == "01")
-                                                //{
-                                                //    int.TryParse(item.OldCaseNum == null ? "" : item.OldCaseNum.ToString(), out num);
-                                                //}
-                                                //if (itemCode.CodeValue == "02")
-                                                //{
-                                                //    int.TryParse(item.Svr02CaseRenum == null ? "" : item.Svr02CaseRenum.ToString(), out num);
-                                                //}
-                                                //if (itemCode.CodeValue == "03")
-                                                //{
-                                                //    int.TryParse(item.Svr03CaseRenum == null ? "" : item.Svr03CaseRenum.ToString(), out num);
-                                                //}
-                                                <text>
-                                                <td>@objSrvEffLst[0].CaseUpNum</td>
-                                                <td>@objSrvEffLst[0].CaseDays</td>
-                                                @*<td rowspan="4">@num</td>*@
-                                                </text>
-                                            }
-                                        </tr>
+                                                <tr>
+                                                    @if (itemCode.CodeValue == "01")
+                                                    { 
+                                                        <td>照管中心評估後轉介至A</td>
+                                                    }
+                                                    @if (itemCode.CodeValue == "02")
+                                                    { 
+                                                        <td>訪案及(評估)計畫擬定4天內完成</td>
+                                                    }
+                                                    @if (itemCode.CodeValue == "03")
+                                                    { 
+                                                        <td>照會服務單位後第一次服務在五天內服務輸送到達</td>
+                                                    }
+                                                    @if (objSrvEffLst.Count > 0)
+                                                    {
+                                                        //int num = 0;
+                                                        //if (itemCode.CodeValue == "01")
+                                                        //{
+                                                        //    int.TryParse(item.OldCaseNum == null ? "" : item.OldCaseNum.ToString(), out num);
+                                                        //}
+                                                        //if (itemCode.CodeValue == "02")
+                                                        //{
+                                                        //    int.TryParse(item.Svr02CaseRenum == null ? "" : item.Svr02CaseRenum.ToString(), out num);
+                                                        //}
+                                                        //if (itemCode.CodeValue == "03")
+                                                        //{
+                                                        //    int.TryParse(item.Svr03CaseRenum == null ? "" : item.Svr03CaseRenum.ToString(), out num);
+                                                        //}
+                                                        <text>
+                                                        <td>@objSrvEffLst[0].CaseUpNum</td>
+                                                        <td>@objSrvEffLst[0].CaseDays</td>
+                                                        @*<td rowspan="4">@num</td>*@
+                                                        </text>
+                                                    }
+                                                </tr>
                                                 }
                                             }
                                 </tbody>
@@ -261,18 +282,17 @@
                                     @{ List<CodeBase> CodeList = (List<CodeBase>)(from item in lstCaseSvrEFF where item.CodeValue == "01" select item).ToList();}
                                     @foreach (CodeBase itemCode in CodeList)
                                     {
-                                        decimal? sum01 = 0;
+                                        double sum01 = 0;
                                         <tr>
                                             <td class="bg-darkgrey" nowrap="nowrap">@itemCode.CodeText</td>
                                             @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
                                             {
-                                                //if (eff.SvrType == "01")
                                                 {
-                                                    <td nowrap="nowrap">@(eff._01UpAvgDays != null ? Decimal.ToInt32((decimal)eff._01UpAvgDays) : 0)</td>
+                                                    <td nowrap="nowrap">@(eff._01UpAvgDays == null ? 0 : Math.Round(Decimal.ToDouble((decimal)eff._01UpAvgDays), 2))</td>
                                                 }
-                                                sum01 += (eff._01UpAvgDays == null ? 0 : eff._01UpAvgDays);
+                                                sum01 += (eff._01UpAvgDays == null ? 0 : Math.Round(Decimal.ToDouble((decimal)eff._01UpAvgDays), 2));
                                             }
-                                            <td nowrap="nowrap">@Decimal.ToInt32((decimal)@sum01)</td>
+                                            <td nowrap="nowrap">@sum01</td>
                                         </tr>
                                     }
                                     @{ CodeList = (List<CodeBase>)(from item in lstCaseSvrEFF where item.CodeValue == "02" select item).ToList();}
@@ -283,11 +303,10 @@
                                             <td class="bg-darkgrey" nowrap="nowrap">@itemCode.CodeText</td>
                                             @foreach (LTCareRate.Models.ViewModel.CaseSvrEffView eff in Model.caseSvrsEffView)
                                             {
-                                                //if (eff.SvrType == "02")
                                                 {
-                                                    <td nowrap="nowrap">@(eff._02UpCasePer != null ? Math.Round(Decimal.ToDouble((decimal)eff._02UpCasePer), 2) : 0) %</td>
+                                                    <td nowrap="nowrap">@(eff._02UpCasePer != null ? Math.Round(Decimal.ToDouble((decimal)eff._02UpCasePer)*100, 2) : 0) %</td>
                                                 }
-                                                sum02 += (eff._02UpCasePer == null ? 0 : eff._02UpCasePer);
+                                                sum02 += (eff._02UpCasePer == null ? 0 : eff._02UpCasePer * 100);
                                             }
                                             <td nowrap="nowrap">@Math.Round(Decimal.ToDouble((decimal)sum02), 2) %</td>
                                         </tr>
@@ -302,9 +321,9 @@
                                             {
                                                 //if (eff.SvrType == "03")
                                                 {
-                                                    <td nowrap="nowrap">@(eff._03UpCasePer != null ? Math.Round(Decimal.ToDouble((decimal)eff._03UpCasePer), 2) : 0) %</td>
+                                                    <td nowrap="nowrap">@(eff._03UpCasePer != null ? Math.Round(Decimal.ToDouble((decimal)eff._03UpCasePer)*100, 2) : 0) %</td>
                                                 }
-                                                sum03 += (eff._03UpCasePer == null ? 0 : eff._03UpCasePer);
+                                                sum03 += (eff._03UpCasePer == null ? 0 : eff._03UpCasePer * 100);
                                             }
                                             <td nowrap="nowrap">@Math.Round(Decimal.ToDouble((decimal)sum03), 2) %</td>
                                         </tr>
@@ -434,4 +453,4 @@
         </div>
     </div>
 </div>
-@*<input id="pdf-button" type="button" value="Download PDF" onclick="downloadPDF()" />*@
+<input id="pdf-button" type="button" value="列印" onclick="print()" />

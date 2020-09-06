@@ -104,13 +104,17 @@ namespace LTCareRate.Controllers
                 Session["AccountNo"] = account;
                 return RedirectToAction("Index", "Home", null);
             }
+            else
+            {
+                
+            }
             if (Session["userRole"] != null && Session["userRole"].ToString() == "1")
             {
                 TempData["action"] = "query";
             }
             else
             {
-                TempData["error"] = "Error: 連線失效，請重新登入.";
+                TempData["error"] = "Error: 連線失效或無效的驗證碼，請重新登入.";
                 return RedirectToAction("Index", "Login", null);
             }
             if (Session["userRole"].ToString() == "2")

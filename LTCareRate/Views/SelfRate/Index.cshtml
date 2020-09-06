@@ -80,39 +80,117 @@
                             <tbody>
                                 @foreach (ScoreItem scoreItem in scoreItems)
                                 {
-                                    foreach (ScoreItem scoreItemChild in scoreItem.ChildItems)
+                                    if (!scoreItem.ItemNo.StartsWith("5"))
                                     {
-                                        int rowSpanCount = scoreItemChild.ChildItems.Count + 1;
-                                        scoreItemChild.ChildItems.ForEach(o => { if (o.ChildItems != null) rowSpanCount += o.ChildItems.Count; });
+                                        foreach (ScoreItem scoreItemChild in scoreItem.ChildItems)
+                                        {
+                                            int rowSpanCount = scoreItemChild.ChildItems.Count + 1;
+                                            scoreItemChild.ChildItems.ForEach(o => { if (o.ChildItems != null) rowSpanCount += o.ChildItems.Count; });
                                         <tr>
                                             <td rowspan="@rowSpanCount">
                                                 @scoreItemChild.ItemNo @scoreItemChild.ItemDesc.Trim()
                                             </td>
                                         </tr>
-                                        foreach (ScoreItem scoreItemGrandSon in scoreItemChild.ChildItems)
-                                        {
-                                            int grandsonRowSpanCount = scoreItemGrandSon.ChildItems.Count + 1;
-                                            scoreItemGrandSon.ChildItems.ForEach(o => { if (o.ChildItems != null) grandsonRowSpanCount += o.ChildItems.Count; });
+                                            foreach (ScoreItem scoreItemGrandSon in scoreItemChild.ChildItems)
+                                            {
+                                                int grandsonRowSpanCount = scoreItemGrandSon.ChildItems.Count + 1;
+                                                //scoreItemGrandSon.ChildItems.ForEach(o => { if (o.ChildItems != null) grandsonRowSpanCount += o.ChildItems.Count; });
                                             <tr>
                                                 
                                                 <td rowspan="@grandsonRowSpanCount">
-                                                    <a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"ScoreDesc", routeValues:new { ItemNo=scoreItemGrandSon.ItemNo})', '', 'width=600,height=450');"><font color="blue">@scoreItemGrandSon.ItemNo</font></a>
+                                                    <a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName: "Index", controllerName: "ScoreDesc", routeValues: new { ItemNo = scoreItemGrandSon.ItemNo })', '', 'width=600,height=450');"><font color="blue">@scoreItemGrandSon.ItemNo</font></a>
                                                         @scoreItemGrandSon.ItemDesc.Trim()
                                                 </td>
                                             </tr>
-                                            if (scoreItemGrandSon.ChildItems != null)
-                                            {
-                                                foreach (ScoreItem scoreItemGrandGradnSon in scoreItemGrandSon.ChildItems)
+                                                if (scoreItemGrandSon.ChildItems != null)
                                                 {
-                                                    double fullscore = double.Parse(scoreItemGrandGradnSon.ItemScore);
-                                                    double halfscore = double.Parse(scoreItemGrandGradnSon.ItemScore) / 2;
-                                                    string nameId = scoreItemGrandGradnSon.ItemNo + "Score";
+                                                    foreach (ScoreItem scoreItemGrandGradnSon in scoreItemGrandSon.ChildItems)
+                                                    {
+                                                        double fullscore = double.Parse(scoreItemGrandGradnSon.ItemScore);
+                                                        double halfscore = double.Parse(scoreItemGrandGradnSon.ItemScore) / 2;
+                                                        string nameId = scoreItemGrandGradnSon.ItemNo + "Score";
+                                                        InstScoreTable itemScoreTab = null;
+                                                        if (instScoreList != null)
+                                                        {
+                                                            instScoreList.ForEach(o =>
+                                                            {
+                                                                if (o.ItemNo == scoreItemGrandGradnSon.ItemNo)
+                                                                {
+                                                                    itemScoreTab = o;
+                                                                    totalScore += double.Parse(itemScoreTab.SelfScore);
+                                                                    return;
+                                                                }
+                                                            });
+                                                        }
+                                                    <tr>
+                                                        <td>@scoreItemGrandGradnSon.ItemNo.Split('-')[scoreItemGrandGradnSon.ItemNo.Split('-').Length - 1] </td>
+                                                        <td>
+                                                            @if (scoreItemGrandGradnSon.IsFocus == "1")
+                                                            {
+                                                                <text>
+                                                                <font color="red"><b>*重點指標</b></font><br />
+                                                                </text>
+                                                            }
+                                                            @scoreItemGrandGradnSon.ItemDesc.Trim()
+                                                        </td>
+                                                        <td nowrap="nowrap">
+                                                            @if (itemScoreTab != null)
+                                                            {
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == fullscore)
+                                                                {
+                                                                    <input type="radio" value="@fullscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
+                                                                }
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == halfscore)
+                                                                {
+                                                                    <input type="radio" value="@halfscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>部分符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
+                                                                }
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == 0)
+                                                                {
+                                                                    <input type="radio" value="0" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>不符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
+                                                                <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
+                                                                <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foreach (ScoreItem scoreItemChild in scoreItem.ChildItems)
+                                        {
+                                            foreach (ScoreItem scoreItemGrandSon in scoreItemChild.ChildItems)
+                                            {
+                                                foreach (ScoreItem scoreItemGrandGrandSon in scoreItemGrandSon.ChildItems)
+                                                {
+                                                    double fullscore = double.Parse(scoreItemGrandGrandSon.ItemScore);
+                                                    double halfscore = double.Parse(scoreItemGrandGrandSon.ItemScore) / 2;
+                                                    string nameId = scoreItemGrandGrandSon.ItemNo + "Score";
                                                     InstScoreTable itemScoreTab = null;
                                                     if (instScoreList != null)
                                                     {
                                                         instScoreList.ForEach(o =>
                                                         {
-                                                            if (o.ItemNo == scoreItemGrandGradnSon.ItemNo)
+                                                            if (o.ItemNo == scoreItemGrandGrandSon.ItemNo)
                                                             {
                                                                 itemScoreTab = o;
                                                                 totalScore += double.Parse(itemScoreTab.SelfScore);
@@ -120,53 +198,59 @@
                                                             }
                                                         });
                                                     }
-                            <tr>
-                                <td>@scoreItemGrandGradnSon.ItemNo.Split('-')[scoreItemGrandGradnSon.ItemNo.Split('-').Length - 1] </td>
-                                <td>
-                                    @if (scoreItemGrandGradnSon.IsFocus == "1") 
-                                    {
-                                        <text>
-                                        <font color="red"><b>*重點指標</b></font><br />
-                                        </text>
-                                    }
-                                    @scoreItemGrandGradnSon.ItemDesc.Trim()
-                                </td>
-                                <td nowrap="nowrap">
-                                    @if (itemScoreTab != null)
-                                    {
-                                        if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == fullscore)
-                                        {
-                                            <input type="radio" value="@fullscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>符合</text>
-                                        }
-                                        else
-                                        {
-                                            <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
-                                        }
-                                        if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == halfscore)
-                                        {
-                                            <input type="radio" value="@halfscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>部分符合</text>
-                                        }
-                                        else
-                                        {
-                                            <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
-                                        }
-                                        if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == 0)
-                                        {
-                                            <input type="radio" value="0" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>不符合</text>
-                                        }
-                                        else
-                                        {
-                                            <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
-                                        <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
-                                        <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
-                                    }
-                                </td>
-                            </tr>
+                                                    <tr>
+                                                        <td>@scoreItemChild.ItemNo @scoreItemChild.ItemDesc</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName: "Index", controllerName: "ScoreDesc", routeValues: new { ItemNo = scoreItemGrandSon.ItemNo })', '', 'width=600,height=450');">
+                                                                <font color="blue">@scoreItemGrandSon.ItemNo</font>
+                                                            </a>@scoreItemGrandSon.ItemDesc.Trim()
+                                                        </td>
+                                                        <td>@scoreItemGrandGrandSon.ItemNo.Split('-')[scoreItemGrandGrandSon.ItemNo.Split('-').Length - 1] </td>
+                                                        <td>
+                                                            @if (scoreItemGrandGrandSon.IsFocus == "1")
+                                                            {
+                                                                <text>
+                                                                <font color="red"><b>*重點指標</b></font><br />
+                                                                </text>
+                                                            }
+                                                            @scoreItemGrandGrandSon.ItemDesc.Trim()
+                                                        </td>
+                                                        <td nowrap="nowrap">
+                                                            @if (itemScoreTab != null)
+                                                            {
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == fullscore)
+                                                                {
+                                                                    <input type="radio" value="@fullscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
+                                                                }
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == halfscore)
+                                                                {
+                                                                    <input type="radio" value="@halfscore" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>部分符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
+                                                                }
+                                                                if (itemScoreTab.INSTNO != null && double.Parse(itemScoreTab.SelfScore) == 0)
+                                                                {
+                                                                    <input type="radio" value="0" name="@nameId" id="@nameId" checked onclick="sumScore();" /><text>不符合</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="radio" value="@fullscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>符合</text>
+                                                                <input type="radio" value="@halfscore" name="@nameId" id="@nameId" onclick="sumScore();" /><text>部分符合</text>
+                                                                <input type="radio" value="0" name="@nameId" id="@nameId" onclick="sumScore();" /><text>不符合</text>
+                                                            }
+                                                        </td>
+                                                    </tr>
                                                 }
                                             }
                                         }

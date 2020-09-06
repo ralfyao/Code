@@ -21,7 +21,7 @@ namespace LTCareRate.Controllers
             return View();
         }
         [HttpGet]
-        public ViewResult BasicData(string accountNo)
+        public ActionResult BasicData(string accountNo)
         {
             MysqlDBA<INSTBase> instBaseDBA = new MysqlDBA<INSTBase>(FunctionController.CONNSTR);
             MysqlDBA<UnitAYear> mysqlDBAUAY = new MysqlDBA<UnitAYear>(FunctionController.CONNSTR);
@@ -130,6 +130,11 @@ namespace LTCareRate.Controllers
                         {
                             obj._03UpCasePer = eff.UpCasePer;
                         }
+                    }
+                    if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                    {
+                        TempData["SessionExipred"] = "true";
+                        return RedirectToAction("Index", "Login", null);
                     }
                     //社區資源網絡會議
                     List<UnitAMeeting> lstCommResMeeting = (List<UnitAMeeting>)new MysqlDBA<UnitAMeeting>(FunctionController.CONNSTR).getDataListNoKey(
