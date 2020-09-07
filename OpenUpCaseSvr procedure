@@ -1,0 +1,31 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `OpenUpCaseSvr`(EvalYear varchar(3))
+BEGIN
+ DECLARE i int DEFAULT 1;
+        
+				DECLARE dtBeg date	DEFAULT '2019-01-01';       
+
+        drop table TempYear;
+        CREATE TEMPORARY TABLE TempYear
+        ( ChiYM CHAR(6) );
+
+         WHILE (i<=17) DO
+              INSERT INTO TempYear VALUES(DATE_FORMAT(dtBeg, '%Y%m')-191100);
+
+                SET dtBeg=DATE_ADD(dtBeg,interval 1 MONTH);
+								set i=i+1;
+
+        END WHILE;
+ 
+        -- insert into casesvr (Year,INSTNO,YM)        
+				-- select A.`Year`,A.INSTNO,B.ChiYM   from unitayear A ,TempYear B  where A.Year=EvalYear  order by A.Year,A.INSTNO,B.ChiYM  ;
+        insert into casesvreff (Year,INSTNO,YM,SvrType)        
+				 select A.`Year`,A.INSTNO,B.ChiYM,'01'   from unitayear A ,TempYear B  where A.Year=EvalYear order by A.Year,A.INSTNO,B.ChiYM  ;
+        insert into casesvreff (Year,INSTNO,YM,SvrType)        
+				 select A.`Year`,A.INSTNO,B.ChiYM,'02'   from unitayear A ,TempYear B where A.Year=EvalYear order by A.Year,A.INSTNO,B.ChiYM  ;
+        insert into casesvreff (Year,INSTNO,YM,SvrType)        
+				 select A.`Year`,A.INSTNO,B.ChiYM,'03'   from unitayear A ,TempYear B where A.Year=EvalYear order by A.Year,A.INSTNO,B.ChiYM  ;    
+
+        drop table TempYear;
+				
+
+END
