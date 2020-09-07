@@ -54,6 +54,10 @@ namespace LTCareRate.Controllers
                         model.area = Utility.Utility.getAreaCode(baseData.INSTAddress.Substring(3, 3));
                         model.address = baseData.INSTAddress.Substring(6);
                         model.AttrMed = baseData.AttrMed;
+                        if (baseData.IncDate != null)
+                        {
+                            model.EstabDate = Utility.Utility.convertUDT2ROCDateFormat(baseData.IncDate.ToString());
+                        }
                         //model.AttrLC = baseData.AttrLC;
                         //model.AttrOther = baseData.AttrOther;
                         ViewBag.city = (List<CityBase>)mysqlDBA_CityBase.getAllDataList(new CityBase());
@@ -66,6 +70,7 @@ namespace LTCareRate.Controllers
                         {
                             ViewBag.uaYList = uaYList[0];
                             model.SpecialArea = uaYList[0].MainAreas;
+                            
                         }
                         model.AttrMedList = Utility.Utility.getAttrList(AttrBase.TypeList.Medical);
                         model.AttrMedList.AddRange(Utility.Utility.getAttrList(AttrBase.TypeList.Longterm));
@@ -110,6 +115,7 @@ namespace LTCareRate.Controllers
                 uaY.INSTTel = post.INSTTel;
                 uaY.CityCode = post.city;
                 uaY.INSTAddress = cityName + areaName + post.address;
+                uaY.MainAreas = post.SpecialArea;
                 uaY.Contact = post.Contact;
                 uaY.ContactTel = post.ContactTel;
                 uaY.AreaCode = areaCode;
@@ -124,7 +130,24 @@ namespace LTCareRate.Controllers
                 baseInst.INSTNO = instNo;
                 baseInst.INSTAddress = cityName + areaName + post.address;
                 baseInst.INSTTel = post.INSTTel;
-                baseInst.IncDate = Utility.Utility.convertROC2UDTDateFormat(post.EstabDate);//new DateTime(int.Parse(post.EstabDate.Split('/')[0]), int.Parse(post.EstabDate.Split('/')[1]), int.Parse(post.EstabDate.Split('/')[2])).ToString("yyyy-MM-dd HH:mm:ss") ;
+                try { string[] strDate = post.EstabDate.Split('/'); if (strDate.Length != 3) { throw new Exception(); } else {
+                        int.Parse(strDate[0]); 
+                        int.Parse(strDate[1]); 
+                        int.Parse(strDate[2]);
+                        if (int.Parse(strDate[0]) < 0 || int.Parse(strDate[1]) < 0 || int.Parse(strDate[2]) < 0)
+                        {
+                            throw new Exception();
+                        }
+                        if (int.Parse(strDate[1]) > 12)
+                        {
+                            throw new Exception();
+                        }
+                        if (int.Parse(strDate[2]) > 31)
+                        {
+                            throw new Exception();
+                        }
+                    } baseInst.IncDate = Utility.Utility.convertROC2UDTDateFormat(post.EstabDate); } catch (Exception ex) { throw new Exception("日期格式有誤!格式為：民國年/月月/日日 ex:109/09/07"); } 
+                //new DateTime(int.Parse(post.EstabDate.Split('/')[0]), int.Parse(post.EstabDate.Split('/')[1]), int.Parse(post.EstabDate.Split('/')[2])).ToString("yyyy-MM-dd HH:mm:ss") ;
                 baseInst.AttrMed = post.AttrMed;
                 //baseInst.AttrLC = post.AttrLC;
                 //baseInst.AttrOther = post.AttrOther;
@@ -160,7 +183,17 @@ namespace LTCareRate.Controllers
             }
             return strRet;
         }
-
+        [HttpPost]
+        public ActionResult GetAreaDDLHtml(string city)
+        {
+            string tagName = "area";
+            string _html = string.Empty;
+            if (!string.IsNullOrWhiteSpace(city))
+            {
+                _html = Utility.Utility.getAreaDDL(city, tagName, null);
+            }
+            return Content(_html);
+        }
         //public ActionResult HR()
         //{
         //    TempData["action"] = "HR";

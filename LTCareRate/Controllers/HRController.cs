@@ -19,6 +19,14 @@ namespace LTCareRate.Controllers
         // GET: HR
         public ActionResult Index(int page = 1)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                //Log.Error(ex + ex.StackTrace);
+                TempData["SessionExipred"] = "true";
+                //TempData["error"] = ex + ex.StackTrace;
+                //tran.Rollback();
+                return RedirectToAction("Index", "Login", null);
+            }
             MysqlDBA<HRAlloc> dbaHRAlloc = new MysqlDBA<HRAlloc>(FunctionController.CONNSTR);
             MysqlDBA<UnitAYear> dbaUnitAYear = new MysqlDBA<UnitAYear>(FunctionController.CONNSTR);
             List<HRAlloc> listData = new List<HRAlloc>();
@@ -32,14 +40,6 @@ namespace LTCareRate.Controllers
 
                 HRAlloc queryCrit = new HRAlloc();
                 queryCrit.Year = (DateTime.Now.Year - 1911).ToString();
-                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                {
-                    //Log.Error(ex + ex.StackTrace);
-                    TempData["SessionExipred"] = "true";
-                    //TempData["error"] = ex + ex.StackTrace;
-                    //tran.Rollback();
-                    return RedirectToAction("Index", "Login", null);
-                }
                 queryCrit.INSTNO = Session["INSTNO"].ToString();
                 DataSet ds = dbaHRAlloc.getDataSet(string.Format("SELECT * FROM HRAlloc WHERE Year='{0}' AND INSTNO='{1}'", queryCrit.Year, queryCrit.INSTNO));
                 foreach (DataRow row in ds.Tables[0].Rows)
@@ -78,19 +78,19 @@ namespace LTCareRate.Controllers
         [HttpPost]
         public ActionResult Index(HRData data)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                //Log.Error(ex + ex.StackTrace);
+                TempData["SessionExipred"] = "true";
+                //TempData["error"] = ex + ex.StackTrace;
+                //tran.Rollback();
+                return RedirectToAction("Index", "Login", null);
+            }
             UnitAYear unitAYear = new UnitAYear();
 
             MysqlDBA<UnitAYear> mysqlDBA = new MysqlDBA<UnitAYear>(FunctionController.CONNSTR);
             try
             {
-                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                {
-                    //Log.Error(ex + ex.StackTrace);
-                    TempData["SessionExipred"] = "true";
-                    //TempData["error"] = ex + ex.StackTrace;
-                    //tran.Rollback();
-                    return RedirectToAction("Index", "Login", null);
-                }
                 unitAYear.INSTNO = Session["INSTNO"].ToString();
                 unitAYear.Year = (DateTime.Now.Year - 1911).ToString();
                 List<UnitAYear> unitAYears = (List<UnitAYear>)mysqlDBA.getDataList(unitAYear);
@@ -122,6 +122,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 List<HRAlloc> listData = new List<HRAlloc>();
                 HRAlloc queryCrit = new HRAlloc();
                 queryCrit.Year = year;
@@ -160,6 +168,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 HRAlloc queryCrit = new HRAlloc();
                 queryCrit.Year = year;
                 queryCrit.INSTNO = INSTNO;

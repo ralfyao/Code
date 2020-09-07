@@ -23,6 +23,11 @@ namespace LTCareRate.Controllers
         [HttpGet]
         public ActionResult BasicData(string accountNo)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             MysqlDBA<INSTBase> instBaseDBA = new MysqlDBA<INSTBase>(FunctionController.CONNSTR);
             MysqlDBA<UnitAYear> mysqlDBAUAY = new MysqlDBA<UnitAYear>(FunctionController.CONNSTR);
             if (accountNo == null)
@@ -50,8 +55,9 @@ namespace LTCareRate.Controllers
                 {
                     basicData.INSTNO = objInstList[0].INSTNO;
                     basicData.INSTName = objInstList[0].INSTName;
-                    basicData.INSTTel = objInstList[0].INSTTel;
+                    basicData.INSTTel = result.ContactTel;
                     basicData.address = objInstList[0].INSTAddress;
+                    basicData.Contact = result.Contact;
                     basicData.AttrMed = Utility.Utility.getBaseAttr(objInstList[0].AttrMed);;
                     if (objInstList.Count > 0 && objInstList[0] != null && !string.IsNullOrEmpty(objInstList[0].IncDate))
                     {

@@ -18,6 +18,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 MysqlDBA<ScoreItem> mysqlDBA = new MysqlDBA<ScoreItem>(FunctionController.CONNSTR);
                 //MysqlDBA<InstScoreTable> mysqlDBAInstScoreTable = new MysqlDBA<InstScoreTable>(FunctionController.CONNSTR);
                 List<ScoreItem> lstScoreItem = new List<ScoreItem>();

@@ -25,5 +25,8 @@ namespace LongtermCare.DataModel.LongtermCare.DataModel
         /// 縣市英文名稱
         /// </summary>
         public string AreaEName { get; set; }
+        public string AreaFName { get; set; }
+        public string AreaFEName { get; set; }
+        public string CityCode { get; set; }
     }
 }

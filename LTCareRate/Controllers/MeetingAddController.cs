@@ -14,12 +14,28 @@ namespace LTCareRate.Controllers
         // GET: MeetingAdd
         public ActionResult Index()
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                //Log.Error(ex + ex.StackTrace);
+                TempData["SessionExipred"] = "true";
+                //TempData["error"] = ex + ex.StackTrace;
+                //tran.Rollback();
+                return RedirectToAction("Index", "Login", null);
+            }
             return View();
         }
         public ActionResult Add(MeetingView data)
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 MysqlDBA<UnitAMeeting> mysqlDBA = new MysqlDBA<UnitAMeeting>(FunctionController.CONNSTR);
                 UnitAMeeting alloc = new UnitAMeeting();
                 alloc.Year = (DateTime.Now.Year - 1911).ToString();

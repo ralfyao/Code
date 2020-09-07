@@ -18,16 +18,31 @@ namespace LTCareRate.Controllers
         // GET: CaseListCount
         public ActionResult Index()
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             return View();
         }
         [HttpPost]
         public ActionResult Index(FormCollection formDataCollection)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             return RedirectToAction("Index", "SupportUnit");
         }
         [HttpPost]
         public ActionResult UploadCaseList(HttpPostedFileBase file_input_list)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             DataSet result;
             DataRowCollection dataRow;
             DataColumnCollection dataColumn;
@@ -97,11 +112,6 @@ namespace LTCareRate.Controllers
                                 string firstSvrDate = string.Empty;
                                 eachObj = new CaseSvrRec();
                                 string year = (DateTime.Now.Year - 1911).ToString();
-                                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                                {
-                                    TempData["SessionExipred"] = "true";
-                                    return RedirectToAction("Index", "Login", null);
-                                }
                                 string INSTNO = Session["INSTNO"].ToString();
                                 int intcaseSerialNo = Utility.Utility.getCaseSrvRecSerNo(mysqlDBA);
                                 intcaseSerialNo++;
@@ -171,6 +181,11 @@ namespace LTCareRate.Controllers
         [HttpPost]
         public ActionResult UploadCaseCount(HttpPostedFileBase file_input_count)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             DataSet result;
             DataRowCollection dataRow;
             DataColumnCollection dataColumn;
@@ -208,17 +223,12 @@ namespace LTCareRate.Controllers
                             {
                                 caseSvr = new CaseSvr();
                                 caseSvr.Year = (DateTime.Now.Year - 1911).ToString();
-                                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                                {
-                                    TempData["SessionExipred"] = "true";
-                                    return RedirectToAction("Index", "Login", null);
-                                }
                                 caseSvr.INSTNO = Session["INSTNO"].ToString();
                                 caseSvr.YM = result.Tables[0].Rows[i][0].ToString();
                                 int j = 1;
                                 try
                                 {
-                                    caseSvr.OldCaseNum = int.Parse(result.Tables[0].Rows[i][j].ToString());//2020-09-01 OldCaseNum不使用
+                                    caseSvr.OldCaseNum = int.Parse(result.Tables[0].Rows[i][j].ToString()); j++;//2020-09-01 OldCaseNum不使用
                                     //2020-09-01 Svr01CaseRenum --> 新案複評量, Svr02CaseRenum --> A單位計畫複評量
                                     //caseSvr.Svr01CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
                                     //caseSvr.Svr02CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;

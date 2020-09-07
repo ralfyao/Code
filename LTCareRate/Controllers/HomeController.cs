@@ -16,6 +16,11 @@ namespace LTCareRate.Controllers
     {
         public ActionResult Index()
         {
+            //if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            //{
+            //    TempData["SessionExipred"] = "true";
+            //    return RedirectToAction("Index", "Login", null);
+            //}
             List<LatestNews> ViewModel = new List<LatestNews>();
             List<MessageRec> dataSet = null;
             //List<AccountBase> retObj = null;

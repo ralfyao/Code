@@ -18,6 +18,11 @@ namespace LTCareRate.Controllers
         // GET: CaseDiscuss
         public ActionResult Index(int page = 1)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             MeetingView viewObj = new MeetingView();
             try
             {
@@ -38,6 +43,11 @@ namespace LTCareRate.Controllers
         }
         public ActionResult Edit(string MSerNo)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             try
             {
                 List<UnitAMeeting> listData = new List<UnitAMeeting>();
@@ -75,6 +85,11 @@ namespace LTCareRate.Controllers
         }
         public ActionResult Delete(string MSerNo)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             try
             {
                 UnitAMeeting queryCrit = new UnitAMeeting();

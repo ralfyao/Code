@@ -20,6 +20,14 @@ namespace LTCareRate.Controllers
             MeetingView viewObj = new MeetingView();
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 UnitAMeeting queryCrit = new UnitAMeeting();
                 queryCrit.INSTNO = Session["INSTNO"].ToString();
                 queryCrit.MType = "1";
@@ -40,6 +48,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 List<UnitAMeeting> listData = new List<UnitAMeeting>();
                 UnitAMeeting queryCrit = new UnitAMeeting();
                 queryCrit.MSerialNo = int.Parse(MSerNo);
@@ -76,6 +92,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 UnitAMeeting queryCrit = new UnitAMeeting();
                 queryCrit.MSerialNo = int.Parse(MSerNo);
                 MysqlDBA<UnitAMeeting> mysqlDBA = new MysqlDBA<UnitAMeeting>(FunctionController.CONNSTR);

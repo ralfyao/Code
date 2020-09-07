@@ -22,6 +22,14 @@ namespace LTCareRate.Controllers
             SupportUnitAdd model = new SupportUnitAdd();
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 MysqlDBA<UnitAToBSum> dbaHRAlloc = new MysqlDBA<UnitAToBSum>(FunctionController.CONNSTR);
                 UnitAToBSum queryCrit = new UnitAToBSum();
                 queryCrit.Year = (DateTime.Now.Year - 1911).ToString();
@@ -57,6 +65,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 List<UnitAToBSum> listData = new List<UnitAToBSum>();
                 UnitAToBSum queryCrit = new UnitAToBSum();
                 queryCrit.Year = year;
@@ -95,6 +111,14 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    //Log.Error(ex + ex.StackTrace);
+                    TempData["SessionExipred"] = "true";
+                    //TempData["error"] = ex + ex.StackTrace;
+                    //tran.Rollback();
+                    return RedirectToAction("Index", "Login", null);
+                }
                 UnitAToBSum queryCrit = new UnitAToBSum();
                 queryCrit.Year = year;
                 queryCrit.INSTNO = INSTNO;

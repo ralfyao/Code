@@ -19,16 +19,16 @@ namespace LTCareRate.Controllers
         }
         public ActionResult Add(MeetingView data)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             try
             {
                 MysqlDBA<UnitAMeeting> mysqlDBA = new MysqlDBA<UnitAMeeting>(FunctionController.CONNSTR);
                 UnitAMeeting alloc = new UnitAMeeting();
                 alloc.Year = data.year;
-                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                {
-                    TempData["SessionExipred"] = "true";
-                    return RedirectToAction("Index", "Login", null);
-                }
                 alloc.INSTNO = Session["INSTNO"].ToString();
                 //-1代表新增，取新流水號
                 if (data.MSerial == "-1" || string.IsNullOrEmpty(data.MSerial))

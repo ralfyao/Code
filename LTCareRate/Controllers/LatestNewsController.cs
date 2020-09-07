@@ -18,6 +18,14 @@ namespace LTCareRate.Controllers
             LatestNews model = new LatestNews();
             try
             {
+                //if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                //{
+                //    //Log.Error(ex + ex.StackTrace);
+                //    TempData["SessionExipred"] = "true";
+                //    //TempData["error"] = ex + ex.StackTrace;
+                //    //tran.Rollback();
+                //    return RedirectToAction("Index", "Login", null);
+                //}
                 MysqlDBA<MessageRec> mysqlDBA = new MysqlDBA<MessageRec>(FunctionController.CONNSTR);
                 MessageRec messageRec = new MessageRec();
                 messageRec.MsgSerialNo = int.Parse(MsgSerialNo);

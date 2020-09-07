@@ -19,6 +19,11 @@ namespace LTCareRate.Controllers
         {
             try
             {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    TempData["SessionExipred"] = "true";
+                    return RedirectToAction("Index", "Login", null);
+                }
                 MysqlDBA<CodeBase> mysqlDBA = new MysqlDBA<CodeBase>(FunctionController.CONNSTR);
                 CodeBase queryCrit = new CodeBase();
                 queryCrit.CodeTable = "HRAlloc";
@@ -39,19 +44,19 @@ namespace LTCareRate.Controllers
         [HttpPost]
         public ActionResult Add(HRData data)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                //Log.Error(ex + ex.StackTrace);
+                TempData["SessionExipred"] = "true";
+                //TempData["error"] = ex + ex.StackTrace;
+                //tran.Rollback();
+                return RedirectToAction("Index", "Login", null);
+            }
             try
             {
                 MysqlDBA<HRAlloc> mysqlDBA = new MysqlDBA<HRAlloc>(FunctionController.CONNSTR);
                 HRAlloc alloc = new HRAlloc();
                 alloc.Year = (DateTime.Now.Year - 1911).ToString();
-                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                {
-                    //Log.Error(ex + ex.StackTrace);
-                    TempData["SessionExipred"] = "true";
-                    //TempData["error"] = ex + ex.StackTrace;
-                    //tran.Rollback();
-                    return RedirectToAction("Index", "Login", null);
-                }
                 alloc.INSTNO = Session["INSTNO"].ToString();
                 //-1代表新增，取新流水號
                 if (data.HRAllocSerNo1 == "-1")

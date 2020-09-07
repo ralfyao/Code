@@ -11,6 +11,11 @@ namespace LTCareRate.Controllers
         // GET: DownLoad
         public ActionResult Index()
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             return View();
         }
         public FileResult CaseList()
