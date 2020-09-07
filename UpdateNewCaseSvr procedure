@@ -1,0 +1,64 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `UpdateNewCaseSvr`( EvalYear varchar(3),UnitAInstNo varchar(20) )
+BEGIN 
+update CaseSvrEff A inner join
+ ( 
+  select  Year,
+					InstNo,
+					DATE_FORMAT(StartDate, '%Y%m')-191100 YM,
+					'01' SvrType,
+					Sum(CalDiffDateNoH(SignDate,StartDate)) Days,
+					Sum(CalDiffDateNoH(SignDate,StartDate)) UpDays,
+					count(*) UpCnt ,  
+					count(*) TCnt  
+		 from CaseSvrRec 
+		where Year=EvalYear 
+		  and InstNo= UnitAInstNo 
+    group by Year,InstNo,DATE_FORMAT(StartDate, '%Y%m') 	
+	  union all	
+  select  Year,
+					InstNo,
+					DATE_FORMAT(SignDate, '%Y%m')-191100 YM,
+					'02' SvrType,
+					Sum(CalDiffDateNoH(CFDate,SignDate)) Days, 
+					sum( case when CalDiffDateNoH(CFDate,SignDate)<=4 and CalDiffDateNoH(CFDate,SignDate) > 0 then CalDiffDateNoH(CFDate,SignDate) else 0 end ) UpDays,
+					sum(case when CalDiffDateNoH(CFDate,SignDate)<=4 and CalDiffDateNoH(CFDate,SignDate) > 0 then 1 else 0 end ) UpCnt,	
+					count(*) TCnt  
+		 from CaseSvrRec 
+		where `Year`=EvalYear 
+		  and InstNo= UnitAInstNo 
+    group by Year,InstNo,DATE_FORMAT(SignDate, '%Y%m') 	
+	  union all 
+	select  Year,
+				  InstNo,
+					DATE_FORMAT(AToBDate, '%Y%m')-191100 YM ,
+					'03' SvrType,
+					Sum(CalDiffDateNoH(FirstSvrDate,AToBDate)) Days ,
+					sum( case when CalDiffDateNoH(FirstSvrDate,AToBDate)<=5 and CalDiffDateNoH(FirstSvrDate,AToBDate) > 0 then CalDiffDateNoH(FirstSvrDate,AToBDate) else 0 end ) UpDays,
+					sum(case when CalDiffDateNoH(FirstSvrDate,AToBDate)<=5 and CalDiffDateNoH(FirstSvrDate,AToBDate) > 0 then 1 else 0 end ) UpCnt,
+					count(*) Cnt 	
+     from CaseSvrRec  where `Year`=EvalYear and InstNo= UnitAInstNo 
+    group by Year,InstNo,DATE_FORMAT(AToBDate, '%Y%m')
+	) B on A.Year=B.Year 
+	   and A.InstNo=B.InstNo 
+		 and A.YM=B.YM 
+		 and A.SvrType=B.SvrType
+	  set  A.CaseNum=B.TCnt, 
+				 A.CaseUpNum=B.UpCnt ,  
+				 A.CaseUpDays=B.UpDays, 
+				 A.CaseDays=B.Days ,
+	       A.UpAvgDays=Round(CAST(B.UpDays as DECIMAL(8,4))/(case when B.TCnt =0 then null else B.TCnt end ),4),
+		  	 A.UpCasePer=Round(Cast(B.UpCnt as DECIMAL(8,4))/(case when B.TCnt =0 then null else B.TCnt end ),4);
+  update CaseSvr A inner join 
+ (select Year,
+				 YM,
+				 INSTNO,
+				 ifnull(CaseNum,0) NewCnt 
+	  from CaseSvrEff 
+	 where Year=EvalYear 
+	   and SvrType='01' 
+		 and INSTNO=UnitAInstNo   )  B 
+      on A.`Year`=B.`Year` 
+		 and A.INSTNO=B.INSTNO 
+		 and A.YM=B.YM 
+     set A.CMDCCntMonth= Round((B.NewCnt+ifnull(A.OldCaseNum,0)+ifnull(A.TraceCaseTotal,0)-ifnull(A.PartPeoNum,0)*75)/A.FullPeoNum,1);
+END
