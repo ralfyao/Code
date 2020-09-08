@@ -17,11 +17,19 @@ namespace LTCareRate.Controllers
         // GET: CommitteeMember
         public ActionResult Index(int page = 1)
         {
+            if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+            {
+                //Log.Error(ex + ex.StackTrace);
+                TempData["SessionExipred"] = "true";
+                return RedirectToAction("Index", "Login", null);
+            }
             CommitteeMember cm = new CommitteeMember();
             try
             {
                 MysqlDBA<CommINSTYear> mysqlDBA = new MysqlDBA<CommINSTYear>(FunctionController.CONNSTR);
-                cm.INSTList = mysqlDBA.getDataList(new CommINSTYear()).ToPagedList(page, DefaultPageSize).OrderBy(p => p.INSTNO).ToPagedList(page, DefaultPageSize);
+                CommINSTYear queryCrit = new CommINSTYear();
+                queryCrit.INSTNO = Session["INSTNO"].ToString();
+                cm.INSTList = mysqlDBA.getDataList(new CommINSTYear()).OrderBy(p => p.INSTNO).ToPagedList(page, DefaultPageSize);
             }
             catch (Exception ex)
             {

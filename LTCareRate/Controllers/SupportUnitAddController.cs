@@ -57,14 +57,6 @@ namespace LTCareRate.Controllers
                 MysqlDBA<UnitAToBSum> mysqlDBA = new MysqlDBA<UnitAToBSum>(FunctionController.CONNSTR);
                 UnitAToBSum alloc = new UnitAToBSum();
                 alloc.Year = (DateTime.Now.Year - 1911).ToString();
-                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                {
-                    //Log.Error(ex + ex.StackTrace);
-                    TempData["SessionExipred"] = "true";
-                    //TempData["error"] = ex + ex.StackTrace;
-                    //tran.Rollback();
-                    return RedirectToAction("Index", "Login", null);
-                }
                 alloc.INSTNO = Session["INSTNO"].ToString();
                 //-1代表新增，取新流水號
                 if (data.TrSeialNo1 == "-1")

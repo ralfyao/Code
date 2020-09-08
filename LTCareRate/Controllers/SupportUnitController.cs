@@ -1,4 +1,5 @@
-﻿using LTCareRate.Models.DataModel;
+﻿using ExcelDataReader;
+using LTCareRate.Models.DataModel;
 using LTCareRate.Models.LTCareRate.DB;
 using LTCareRate.Models.ViewModel;
 using LTCareRate.Utility;
@@ -6,6 +7,7 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -137,6 +139,116 @@ namespace LTCareRate.Controllers
                 return RedirectToAction("Index", "SupportUnit", null);
             }
             return RedirectToAction("Index", "SupportUnit", null);
+        }
+        [HttpPost]
+        public ActionResult UploadServiceUnit(HttpPostedFileBase file_input)
+        {
+            try
+            {
+                if (file_input == null || file_input.ContentLength == 0)
+                {
+                    TempData["error"] = "請先上傳檔案!";
+                    return RedirectToAction("Index", "SupportUnit", null);
+                }
+                DataSet result;
+                DataRowCollection dataRow;
+                DataColumnCollection dataColumn;
+                int colIndex = 1;
+                int rowIndex = 0;
+                if (file_input.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file_input.FileName);
+                    //檔案明加上時間戳記
+                    fileName = fileName.Split('.')[0] + DateTime.Now.ToString("yyyyMMddHHmmss") + "." + fileName.Split('.')[1];
+                    var path = Path.Combine(Server.MapPath("~/FileUploads"), fileName);
+                    file_input.SaveAs(path);
+                    using (FileStream fileStream = System.IO.File.Open(path, FileMode.Open, FileAccess.Read))
+                    {
+                        using (IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream))
+                        {
+                            result = excelReader.AsDataSet(new ExcelDataSetConfiguration()
+                            {
+                                UseColumnDataType = false,
+                                ConfigureDataTable = (tableReader) => new ExcelDataTableConfiguration()
+                                {
+                                    //設定讀取資料時是否忽略標題
+                                    UseHeaderRow = false
+                                }
+                            });
+                            dataRow = result.Tables[0].Rows;
+                            dataColumn = result.Tables[0].Columns;
+                            MysqlDBA<UnitAToBSum> mysqlDBA = new MysqlDBA<UnitAToBSum>(FunctionController.CONNSTR);
+                            UnitAToBSum alloc = new UnitAToBSum();
+                            for (int i = 2; i < dataRow.Count; i++)
+                            {
+                                List<CodeBase> codeBaseList = Utility.Utility.getCodeBaseValueList("UnitAtoBSum", "LCareType", result.Tables[0].Rows[i][0].ToString());
+                                if (codeBaseList.Count > 0)
+                                {
+                                    alloc.LCareType = codeBaseList[0].CodeValue; colIndex++;
+                                }
+                                else
+                                {
+                                    TempData["action"] = "Function";
+                                    TempData["error"] = "機構名稱不可空白!";
+                                    return RedirectToAction("Index", "SupportUnit", null);
+                                }
+                                if (string.IsNullOrEmpty(result.Tables[0].Rows[i][1].ToString()))
+                                {
+                                    TempData["action"] = "Function";
+                                    TempData["error"] = "服務類別錯誤，無此服務類別：" + result.Tables[0].Rows[i][1].ToString();
+                                    return RedirectToAction("Index", "SupportUnit", null);
+                                }
+                                try
+                                {
+                                    int.Parse(result.Tables[0].Rows[i][2].ToString());
+                                    if (int.Parse(result.Tables[0].Rows[i][2].ToString()) < 0)
+                                    {
+                                        throw new Exception();   
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    TempData["action"] = "Function";
+                                    TempData["error"] = "轉介個案數量錯誤或空白：\"" + result.Tables[0].Rows[i][0].ToString() + "\"不是一個正整數";
+                                    return RedirectToAction("Index", "SupportUnit", null);
+                                }
+                            }
+                            for (int i = 2; i < dataRow.Count; i++)
+                            {
+                                colIndex = 0;
+                                alloc = new UnitAToBSum();
+                                alloc.Year = (DateTime.Now.Year - 1911).ToString();
+                                alloc.INSTNO = Session["INSTNO"].ToString();
+                                alloc.TrSeialNo = Utility.Utility.getUnitAToBSumSerNo(mysqlDBA);
+                                alloc.TrSeialNo++;
+                                alloc.INSTNO = Session["INSTNO"].ToString();
+                                List<CodeBase> codeBaseList = Utility.Utility.getCodeBaseValueList("UnitAtoBSum", "LCareType", result.Tables[0].Rows[i][colIndex].ToString());
+                                alloc.LCareType = codeBaseList[0].CodeValue; colIndex++;
+                                alloc.UnitBNo = "";
+                                alloc.UnitBName = result.Tables[0].Rows[i][colIndex].ToString(); colIndex++;
+                                alloc.TrCaseNum = result.Tables[0].Rows[i][colIndex].ToString(); colIndex++;
+                                //alloc.Modifydate = DateTime.Now.ToString("yyyy-MM-dd");
+                                alloc.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
+                                mysqlDBA.InsertOrUpdate(alloc);
+                            }
+                            TempData["success"] = "OK";
+                            TempData["parentreload"] = "OK";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex + ex.StackTrace);
+                TempData["action"] = "Function";
+                TempData["error"] = ex + ex.StackTrace;
+                return RedirectToAction("Index", "SupportUnit", null);
+            }
+            return RedirectToAction("Index", "SupportUnit", null);
+        }
+        public ActionResult Next()
+        {
+            return RedirectToAction("Index", "SelfRate", null);
         }
     }
 }

@@ -87,7 +87,8 @@ namespace LTCareRate.Controllers
                                 //檢查檔案內容案號
                                 if (strCaseNo == result.Tables[0].Rows[i][0].ToString())
                                 {
-                                    throw new Exception("案號" + result.Tables[0].Rows[i][0].ToString() + "重複!");
+                                    TempData["error"] = "案號" + result.Tables[0].Rows[i][0].ToString() + "重複!";
+                                    return RedirectToAction("Index", "CaseListCount", null);
                                 }
                                 else
                                 {
@@ -98,7 +99,8 @@ namespace LTCareRate.Controllers
                                 eachObj.CaseNo = result.Tables[0].Rows[i][0].ToString();
                                 if (new MysqlDBA<CaseSvrRec>(FunctionController.CONNSTR).getDataListNoKey(eachObj).Count() > 0)
                                 {
-                                    throw new Exception("案號"+ result.Tables[0].Rows[i][0].ToString()+"重複!");
+                                    TempData["error"] = "案號" + result.Tables[0].Rows[i][0].ToString() + "重複!";
+                                    return RedirectToAction("Index", "CaseListCount", null);
                                 }
                             }
                             for (int i = 3; i < dataRow.Count; i++)
@@ -118,16 +120,24 @@ namespace LTCareRate.Controllers
                                 string caseSerialNo = intcaseSerialNo.ToString();
                                 colIndex = 0;
                                 caseNo = result.Tables[0].Rows[i][colIndex].ToString(); colIndex++;
-                                DateTime startDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                startDate = (startDateTime.Year + 1911) + "-" + startDateTime.Month.ToString("00") + "-" + startDateTime.Day.ToString("00");
-                                DateTime signDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month.ToString("00") + "-" + signDateTime.Day.ToString("00");
-                                DateTime cfDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month.ToString("00") + "-" + cfDateTime.Day.ToString("00");
-                                DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
-                                DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                try
+                                {
+                                    DateTime startDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    startDate = (startDateTime.Year + 1911) + "-" + startDateTime.Month.ToString("00") + "-" + startDateTime.Day.ToString("00");
+                                    DateTime signDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month.ToString("00") + "-" + signDateTime.Day.ToString("00");
+                                    DateTime cfDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month.ToString("00") + "-" + cfDateTime.Day.ToString("00");
+                                    DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
+                                    DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                }
+                                catch (Exception ex)
+                                {
+                                    TempData["error"] = "檔案格式錯誤，在第" + rowIndex + "列第" + colIndex + "欄";
+                                    return RedirectToAction("Index", "CaseListCount", null);
+                                }
                                 eachObj.Year = year;
                                 eachObj.INSTNO = INSTNO;
                                 eachObj.CaseSerNo = int.Parse(caseSerialNo);
@@ -243,7 +253,8 @@ namespace LTCareRate.Controllers
                                 }
                                 catch (FormatException ex)
                                 {
-                                    throw new Exception("數字格式錯誤!在第" + i + "列第" + j + "行");
+                                    TempData["error"] = "數字格式錯誤!在第" + i + "列第" + j + "行";
+                                    return RedirectToAction("Index", "CaseListCount", null);
                                 }
                                 mysqlDBA.InsertOrUpdate(caseSvr);
                             }

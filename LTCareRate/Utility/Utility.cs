@@ -280,6 +280,8 @@ namespace LTCareRate.Utility
             return ddl;
         }
 
+ 
+
         internal static string getCityBase(string city)
         {
             string cityName = string.Empty;
@@ -476,7 +478,7 @@ namespace LTCareRate.Utility
                 queryCrit.CodeTable = CodeTable;
                 queryCrit.CodeField = CodeField;
                 queryCrit.CodeText = text;
-                strRet = (List<CodeBase>)new MysqlDBA<CodeBase>(FunctionController.CONNSTR).getDataList(queryCrit);
+                strRet = (List<CodeBase>)new MysqlDBA<CodeBase>(FunctionController.CONNSTR).getDataListNoKey(queryCrit);
             }
             catch (Exception ex)
             {
@@ -503,6 +505,43 @@ namespace LTCareRate.Utility
                 throw ex;
             }
             return strRet;
+        }
+
+        public static string verifyDate(string inDate)
+        {
+            string outDate = string.Empty;
+            try
+            {
+                string[] strDate = inDate.Split('/'); if (strDate.Length != 3) { throw new Exception(); }
+                else
+                {
+                    if (int.Parse(strDate[0]) > DateTime.Now.Year - 1911)
+                        throw new Exception();
+                    int.Parse(strDate[0]);
+                    int.Parse(strDate[1]);
+                    int.Parse(strDate[2]);
+                    if (int.Parse(strDate[0]) < 0 || int.Parse(strDate[1]) < 0 || int.Parse(strDate[2]) < 0)
+                    {
+                        throw new Exception();
+                    }
+                    if (int.Parse(strDate[1]) > 12)
+                    {
+                        throw new Exception();
+                    }
+                    if (int.Parse(strDate[2]) > 31)
+                    {
+                        throw new Exception();
+                    }
+                }
+                string rocDate = convertROC2UDTDateFormat(inDate);
+                DateTime.Parse(rocDate);
+                outDate = rocDate;
+            }
+            catch (Exception ex) 
+            {
+                return "DateError";
+            }
+            return outDate;
         }
     }
 }

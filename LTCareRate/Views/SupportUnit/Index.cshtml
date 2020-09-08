@@ -59,7 +59,6 @@
                                 <tr class="font-weight-bold">
                                     <th>操作</th>
                                     <th>服務類別</th>
-                                    <th>機構代號</th>
                                     <th>機構名稱</th>
                                     <th>轉介個案數</th>
                                 </tr>
@@ -78,7 +77,6 @@
                                             <a href="javascript:void(0)" onclick="if (confirm('您是否刪除此筆資料')) { window.open('@Url.Action("Delete", "SupportUnit", new { year=uA2B.Year, INSTNO=uA2B.INSTNO, TrSeialNo = uA2B.TrSeialNo })', '', 'width=500,height=500'); }"><img alt="刪除" src="~/images/delete.png" width="30" height="30" /></a>
                                         </td>
                                         <td>@careType</td>
-                                        <td>@uA2B.UnitBNo</td>
                                         <td>@uA2B.UnitBName</td>
                                         <td>@uA2B.TrCaseNum</td>
                                     </tr>
@@ -90,10 +88,35 @@
                         </div>
                     </div>
                 </fieldset>
-                <div class="col-12 text-left">
-                    @*<a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"SupportUnitAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>*@
-                    @*@Html.ActionLink("新增一筆資料", "Index", "HRAdd", null, new { @onclick="window.open('http://www.googlecom.tw')" })*@
-                </div>
+            </form>
+            <div class="gborder bg-light py-5 px-lg-5 px-md-4 px-xx-3">
+                <form runat="server" class="process-form" id="form2" method="post" enctype="multipart/form-data" action="@Url.Action("UploadServiceUnit", "SupportUnit")">
+                    <div class="">
+                        <div class="pb-3">
+                            <h5 class="font-weight-bold mb-0 text-teal">合作服務提供單位資料上傳</h5>
+                            <div class="mb-4">
+                                <div class="input-group input-group-lg  justify-content-xl-between align-items-start flex-fit">
+                                    <div class="col-md-8 col-xs-12 col-xx-12 border py-2 mb-sm-0 mb-xx-2 pl-2">
+                                        <div class="file-upload-container justify-content-sm-start justify-content-xx-center">
+                                            <input type="file" class="form-control-file d-inline-block" id="file_input" name="file_input" value="" hidden="hidden">
+                                            @*<label for="file_input_list" class="pl-3 mb-0 mr-sm-2 mr-xx-0 file-input-trigger">選擇檔案 <i class="icon-upload"></i></label>*@
+                                        </div><!--fille-container-->
+                                        [@Html.ActionLink("合作服務提供單位上傳格式下載", "ServiceUnitExample", "DownLoad")]
+                                    </div><!--6-->
+                                    <div class="col-md-4 col-sm-4 col-xs-5 col-xx-12 mt-xx-3 text-xs-left text-xx-center">
+                                        <input type="submit" class="btn btn-teal rounded-0" value="開始上傳" />
+                                    </div><!--auto-->
+                                </div><!--input-group-->
+                            </div><!--gw-->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 text-left">
+                @*<a href="javascript:void(0)" onclick="window.open('@Url.Action(actionName:"Index", controllerName:"SupportUnitAdd", routeValues:null)', '', 'width=1200,height=900');">新增一筆資料</a>*@
+                @*@Html.ActionLink("新增一筆資料", "Index", "HRAdd", null, new { @onclick="window.open('http://www.googlecom.tw')" })*@
+            </div>
+            <form runat="server" class="process-form" id="form3" action="@Url.Action("Next", "SupportUnit")">
                 <div class="col-12 text-center">
                     <button type="reset" class="btn btn-lg btn-warning px-4" id="submit">清&emsp;&ensp;除</button>
                     <button type="submit" class="btn btn-lg btn-success px-4" id="submit">下 一 步</button>

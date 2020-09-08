@@ -82,10 +82,7 @@ namespace LTCareRate.Controllers
             {
                 if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
                 {
-                    //Log.Error(ex + ex.StackTrace);
                     TempData["SessionExipred"] = "true";
-                    //TempData["error"] = ex + ex.StackTrace;
-                    //tran.Rollback();
                     return RedirectToAction("Index", "Login", null);
                 }
                 string accountNo = Session["INSTNO"].ToString();
@@ -111,7 +108,6 @@ namespace LTCareRate.Controllers
                         }
                     }
                 }
-                TempData["success"] = "OK";
             }
             catch (Exception ex)
             {
@@ -120,7 +116,7 @@ namespace LTCareRate.Controllers
                 TempData["error"] = ex + ex.StackTrace;
                 return RedirectToAction("Index", "SelfRate", null);
             }
-            return RedirectToAction("Index", "CaseListCount");
+            return RedirectToAction("Index", "Meeting");
         }
     }
 }

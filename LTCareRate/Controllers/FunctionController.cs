@@ -130,27 +130,10 @@ namespace LTCareRate.Controllers
                 baseInst.INSTNO = instNo;
                 baseInst.INSTAddress = cityName + areaName + post.address;
                 baseInst.INSTTel = post.INSTTel;
-                try { string[] strDate = post.EstabDate.Split('/'); if (strDate.Length != 3) { throw new Exception(); } else {
-                        int.Parse(strDate[0]); 
-                        int.Parse(strDate[1]); 
-                        int.Parse(strDate[2]);
-                        if (int.Parse(strDate[0]) < 0 || int.Parse(strDate[1]) < 0 || int.Parse(strDate[2]) < 0)
-                        {
-                            throw new Exception();
-                        }
-                        if (int.Parse(strDate[1]) > 12)
-                        {
-                            throw new Exception();
-                        }
-                        if (int.Parse(strDate[2]) > 31)
-                        {
-                            throw new Exception();
-                        }
-                    } baseInst.IncDate = Utility.Utility.convertROC2UDTDateFormat(post.EstabDate); } catch (Exception ex) { throw new Exception("日期格式有誤!格式為：民國年/月月/日日 ex:109/09/07"); } 
-                //new DateTime(int.Parse(post.EstabDate.Split('/')[0]), int.Parse(post.EstabDate.Split('/')[1]), int.Parse(post.EstabDate.Split('/')[2])).ToString("yyyy-MM-dd HH:mm:ss") ;
+                string verifyDateResult = Utility.Utility.verifyDate(post.EstabDate);
+                if (verifyDateResult == "DateError") { TempData["error"] = "日期格式錯誤，需為民國年/月月/日日 如：109/09/08"; return RedirectToAction("Index", "Function", null); }
+                baseInst.IncDate = Utility.Utility.convertROC2UDTDateFormat(post.EstabDate);
                 baseInst.AttrMed = post.AttrMed;
-                //baseInst.AttrLC = post.AttrLC;
-                //baseInst.AttrOther = post.AttrOther;
                 mysqlDBA_InstBase.InsertOrUpdate(baseInst);
             }
             catch (Exception ex)

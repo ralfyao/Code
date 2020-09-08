@@ -101,9 +101,15 @@ namespace LTCareRate.Controllers
                 unitAYear.ResignNum = data.YearLeaveCnt;
                 unitAYear.CMDBegYearNum = data.YearStartCnt;
                 unitAYear.CMDPeriodAddNum = data.RateAddCnt;
-                unitAYear.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
-                unitAYear.EvalDate = DateTime.Parse(unitAYear.EvalDate).ToString("yyyy-MM-dd");
-                unitAYear.Modifydate = DateTime.Parse(unitAYear.EvalDate).ToString("yyyy-MM-dd");
+                unitAYear.Modifydate = DateTime.Now.ToString("yyyy-MM-dd");
+                if (!string.IsNullOrEmpty(unitAYear.EvalDate))
+                {
+                    unitAYear.EvalDate = DateTime.Parse(unitAYear.EvalDate).ToString("yyyy-MM-dd");
+                }
+                if (!string.IsNullOrEmpty(unitAYear.CreateDate))
+                {
+                    unitAYear.CreateDate = DateTime.Parse(unitAYear.CreateDate).ToString("yyyy-MM-dd");
+                }
                 unitAYear.ModifyUser = Session["AccountNo"].ToString();
                 mysqlDBA.InsertOrUpdate(unitAYear);
             }

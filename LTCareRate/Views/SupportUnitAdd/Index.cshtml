@@ -58,8 +58,8 @@
                             </div>
                             <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
-                                    <input type="text" class="form-control order-3" id="INSTNO" name="INSTNO" value="@hR.UnitBNo" required>
-                                    <label for="INSTNO" class="mb-1 order-0 w-20">機構代號</label>
+                                    <input type="text" class="form-control order-3" id="INSTNO" name="INSTNO" value="@hR.UnitBNo" hidden="hidden">
+                                    <label for="INSTNO" class="mb-1 order-0 w-20" hidden="hidden">機構代號</label>
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                             </div>
                             <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
-                                    <input type="text" class="form-control order-3" id="CaseNo" name="CaseNo" value="@hR.TrCaseNum" required>
+                                    <input type="number" class="form-control order-3" id="CaseNo" name="CaseNo" value="@hR.TrCaseNum" required  max="10000" min="1">
                                     <label for="CaseNo" class="mb-1 order-0 w-20">個案數</label>
                                 </div>
                             </div>

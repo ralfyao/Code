@@ -25,7 +25,7 @@
 @model LTCareRate.Models.ViewModel.MeetingView
 <div class="col-xl-9 col-lg-9 col-md-11 pl-xl-0 pl-lg-5">
     <div class="gw page-list mb-4">
-        <h3 class="font-weight-bold">社區資源網絡會議 新增/修改</h3>
+        <h3 class="font-weight-bold">區域跨專業個案討論會 新增/修改</h3>
     </div><!--gw-->
     <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
         <form runat="server" class="gw process-form" id="form1" method="post" action="/CaseDiscussAdd/Add">
@@ -36,13 +36,13 @@
                         <div class="row">
                             <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
-                                    <input type="text" class="form-control order-2" value="@hR.Year" id="year" name="year" required />
+                                    <input type="text" class="form-control order-2" maxlength="4" value="@hR.Year" id="year" name="year" required />
                                     <label for="year" class="mb-1 order-0 w-10">年度</label>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
-                                    <input type="text" class="form-control order-2" value="@hR.MDate" id="date" name="date" required />
+                                    <input type="text" class="form-control order-2" value="@hR.MDate" id="date" name="date" required title="民國年/月月/日日 ex:109/09/07" />
                                     <label for="date" class="mb-1 order-0 w-20">會議日期</label>
                                 </div>
                             </div>
@@ -57,13 +57,13 @@
                             </div>
                             <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
-                                    <input type="number" class="form-control order-3" id="attend" name="attend" value="@hR.AttendNum" required>
+                                    <input type="number" class="form-control order-3" maxlength="4" id="attend" name="attend" value="@hR.AttendNum" required max="10000" min="1">
                                     <label for="attend" class="mb-1 order-0 w-20">與會單位/人員數</label>
                                 </div>
                             </div>
                             <div class="col-xl-2 col-sm-6 mb-md-4 mb-xx-3">
                                 <div class="input-group input-group-lg align-items-center">
-                                    <input type="number" class="form-control order-3" id="profcnt" name="profcnt" value="@hR.ProfCnt" required>
+                                    <input type="number" class="form-control order-3" maxlength="4" id="profcnt" name="profcnt" value="@hR.ProfCnt" required max="10000" min="1">
                                     <label for="profcnt" class="mb-1 order-0 w-20">幾種專業人員</label>
                                 </div>
                             </div>

@@ -117,5 +117,9 @@ namespace LTCareRate.Controllers
             }
             return RedirectToAction("Index", "MeetingAdd", null);
         }
+        public ActionResult Next()
+        {
+            return RedirectToAction("Index", "CaseDiscuss", null);
+        }
     }
 }

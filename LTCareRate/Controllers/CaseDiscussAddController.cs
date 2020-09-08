@@ -42,6 +42,8 @@ namespace LTCareRate.Controllers
                     alloc.MSerialNo = int.Parse(data.MSerial);
                 }
                 alloc.MType = "2";
+                string verifyDateResult = Utility.Utility.verifyDate(data.date);
+                if (verifyDateResult == "DateError") { TempData["error"] = "日期格式錯誤，需為民國年/月月/日日 如：109/09/08"; return RedirectToAction("Index", "CaseDiscussAdd", null); }
                 alloc.MDate = Utility.Utility.convertROC2UDTDateFormat(data.date);
                 alloc.Topic = data.topic;
                 alloc.ProfCnt = int.Parse(string.IsNullOrEmpty(data.profcnt) ? "0" : data.profcnt);

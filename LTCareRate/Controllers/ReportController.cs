@@ -55,7 +55,7 @@ namespace LTCareRate.Controllers
                 {
                     basicData.INSTNO = objInstList[0].INSTNO;
                     basicData.INSTName = objInstList[0].INSTName;
-                    basicData.INSTTel = result.ContactTel;
+                    basicData.INSTTel = objInstList[0].INSTTel;
                     basicData.address = objInstList[0].INSTAddress;
                     basicData.Contact = result.Contact;
                     basicData.AttrMed = Utility.Utility.getBaseAttr(objInstList[0].AttrMed);;

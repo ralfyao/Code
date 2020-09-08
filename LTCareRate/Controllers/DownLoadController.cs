@@ -38,5 +38,15 @@ namespace LTCareRate.Controllers
             var fileName = Server.MapPath("~/Files/個案評鑑服務量_範例.xlsx");
             return File(fileName, "application/ms-excel", "個案評鑑服務量_範例.xlsx");
         }
+        public FileResult ServiceUnit()
+        {
+            var fileName = Server.MapPath("~/Files/合作服務提供單位.xlsx");
+            return File(fileName, "application/ms-excel", "合作服務提供單位.xlsx");
+        }
+        public FileResult ServiceUnitExample()
+        {
+            var fileName = Server.MapPath("~/Files/合作服務提供單位_範例.xlsx");
+            return File(fileName, "application/ms-excel", "合作服務提供單位_範例.xlsx");
+        }
     }
 }
