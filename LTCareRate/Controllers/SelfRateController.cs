@@ -57,11 +57,6 @@ namespace LTCareRate.Controllers
                         TempData["SessionExipred"] = "true";
                         return RedirectToAction("Index", "Login", null);
                     }
-                    //List<InstScoreTable> instScoreList = Utility.Utility.getInstScore(Session["INSTNO"].ToString(), score_Item.ItemNo, score_Item.EvalYear);
-                    //if (instScoreList.Count > 0)
-                    //{
-                    //    instScoreTables.Add(instScoreList[0]);
-                    //}
                 }
                 TempData["ScoreItems"] = lstScoreItem;
                 TempData["InstScores"] = instScoreTables;
@@ -117,6 +112,51 @@ namespace LTCareRate.Controllers
                 return RedirectToAction("Index", "SelfRate", null);
             }
             return RedirectToAction("Index", "Meeting");
+        }
+        public ActionResult Index_Blank(string INSTNO="", string INSTName = "")
+        {
+            try
+            {
+                if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
+                {
+                    TempData["SessionExipred"] = "true";
+                    return RedirectToAction("Index", "Login", null);
+                }
+                MysqlDBA<ScoreItem> mysqlDBA = new MysqlDBA<ScoreItem>(FunctionController.CONNSTR);
+                List<ScoreItem> lstScoreItem = new List<ScoreItem>();
+                DataSet scoreItemsdateSet = mysqlDBA.getDataSet(string.Format("SELECT * FROM ScoreItem WHERE ItemParentNo='-1'"));
+                List<InstScoreTable> instScoreTables = new List<InstScoreTable>();
+                foreach (DataRow scoreItem in scoreItemsdateSet.Tables[0].Rows)
+                {
+                    ScoreItem score_Item = new ScoreItem();
+                    score_Item.ItemNo = scoreItem["ItemNo"].ToString();
+                    score_Item.ItemParentNo = scoreItem["ItemParentNo"].ToString();
+                    score_Item.ItemDesc = scoreItem["ItemDesc"].ToString();
+                    score_Item.ItemGrade = scoreItem["ItemGrade"].ToString();
+                    score_Item.ItemScore = scoreItem["ItemScore"].ToString();
+                    score_Item.EvalYear = scoreItem["EvalYear"].ToString();
+                    score_Item.EvalType = scoreItem["EvalType"].ToString();
+                    score_Item.CreateDate = scoreItem["CreateDate"].ToString();
+                    score_Item.getChildItem(mysqlDBA, instScoreTables, INSTNO);
+                    lstScoreItem.Add(score_Item);
+                    if (Session["INSTNO"] == null || string.IsNullOrEmpty(INSTNO))
+                    {
+                        TempData["SessionExipred"] = "true";
+                        return RedirectToAction("Index", "Login", null);
+                    }
+                }
+                TempData["INSTName"] = INSTName;
+                TempData["ScoreItems"] = lstScoreItem;
+                TempData["InstScores"] = instScoreTables;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex + ex.StackTrace);
+                TempData["action"] = "Function";
+                TempData["error"] = ex + ex.StackTrace;
+                return RedirectToAction("Index", "SelfRate", null);
+            }
+            return View();
         }
     }
 }

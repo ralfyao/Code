@@ -36,7 +36,7 @@
             @*<form runat="server" class="gw process-form" id="form1" method="post" action="/HR/Index">*@
             <fieldset class="pb-2 font-kai">
                 <div class="table-wrap pb-0 center-block align-self-center">
-                    <h3>臺中市社區整合型服務中心(A 單位)評鑑作業之基本資料表</h3>
+                    <h3>@Model.INSTName 評鑑作業之基本資料表</h3>
                 </div>
                 <table class="table table-bordered table-striped mb-0 table-hover" border="1" cellpadding="0" cellspacing="0">
                     <tr>
@@ -439,4 +439,4 @@
         </div>
     </div>
 </div>
-<input id="pdf-button" type="button" value="列印" onclick="print()" />
+<input id="pdf-button" type="button" value="下載" onclick="downloadPDF()" />

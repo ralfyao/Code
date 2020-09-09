@@ -28,8 +28,12 @@ namespace LTCareRate.Controllers
             {
                 MysqlDBA<CommINSTYear> mysqlDBA = new MysqlDBA<CommINSTYear>(FunctionController.CONNSTR);
                 CommINSTYear queryCrit = new CommINSTYear();
-                queryCrit.INSTNO = Session["INSTNO"].ToString();
-                cm.INSTList = mysqlDBA.getDataList(new CommINSTYear()).OrderBy(p => p.INSTNO).ToPagedList(page, DefaultPageSize);
+                queryCrit.ACommNo = Session["INSTNO"].ToString();
+                List<CommINSTYear> commINSTYears = (List<CommINSTYear>)mysqlDBA.getDataListNoKey(queryCrit);
+                queryCrit = new CommINSTYear();
+                queryCrit.BCommNo = Session["INSTNO"].ToString();
+                commINSTYears.AddRange((List<CommINSTYear>)mysqlDBA.getDataListNoKey(queryCrit));
+                cm.INSTList = commINSTYears.OrderBy(p => p.INSTNO).ToPagedList(page, DefaultPageSize);
             }
             catch (Exception ex)
             {

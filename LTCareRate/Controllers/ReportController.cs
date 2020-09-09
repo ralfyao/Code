@@ -86,9 +86,9 @@ namespace LTCareRate.Controllers
                     List<UnitAToBSum> list = new List<UnitAToBSum>();
                     MysqlDBA<UnitAToBSum> mysqlDBA_UAB = new MysqlDBA<UnitAToBSum>(FunctionController.CONNSTR);
                     UnitAToBSum queryCritUAB = new UnitAToBSum();
-                    queryCrit.Year = (DateTime.Now.Year - 1911).ToString();
-                    queryCrit.INSTNO = INSTNO;
-                    list = (List<UnitAToBSum>)mysqlDBA_UAB.getDataList(queryCritUAB);
+                    queryCritUAB.Year = (DateTime.Now.Year - 1911).ToString();
+                    queryCritUAB.INSTNO = INSTNO;
+                    list = (List<UnitAToBSum>)mysqlDBA_UAB.getDataListNoKey(queryCritUAB);
                     basicData.unitAToBSums = list;
                     //個管服務量
                     List<CaseSvr> listCaseSvr = new List<CaseSvr>();

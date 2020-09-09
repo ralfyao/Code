@@ -50,9 +50,12 @@ namespace LTCareRate.Controllers
                         model.INSTName = baseData.INSTName;
                         model.INSTTel = baseData.INSTTel;
                         model.EstabDate = Utility.Utility.convertUDT2ROCDateFormat(baseData.IncDate);
-                        model.city = Utility.Utility.getCityCode(baseData.INSTAddress.Substring(0, 3));
-                        model.area = Utility.Utility.getAreaCode(baseData.INSTAddress.Substring(3, 3));
-                        model.address = baseData.INSTAddress.Substring(6);
+                        if (!string.IsNullOrEmpty(baseData.INSTAddress))
+                        {
+                            model.city = Utility.Utility.getCityCode(baseData.INSTAddress.Substring(0, 3));
+                            model.area = Utility.Utility.getAreaCode(baseData.INSTAddress.Substring(3, 3));
+                            model.address = baseData.INSTAddress.Substring(6);
+                        }
                         model.AttrMed = baseData.AttrMed;
                         if (baseData.IncDate != null)
                         {
@@ -119,6 +122,11 @@ namespace LTCareRate.Controllers
                 uaY.Contact = post.Contact;
                 uaY.ContactTel = post.ContactTel;
                 uaY.AreaCode = areaCode;
+                uaY.EvalDate = "1912-01-01";
+                uaY.ResignNum = "0";
+                uaY.CMDBegYearNum = "0";
+                uaY.CMDPeriodAddNum = "0";
+                uaY.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
                 uaY.EMail = post.EMail;
                 uaY.Modifydate = DateTime.Now.ToString("yyyy-MM-dd");
                 uaY.CreateUser = Session["AccountNo"].ToString();

@@ -33,6 +33,39 @@ namespace LTCareRate.Utility
             }
             return strRet;
         }
+
+        public static string getEvalPeriod(string instr)
+        {
+            if (instr == "AM")
+            {
+                return "早上";
+            }
+            if (instr == "PM")
+            {
+                return "下午";
+            }
+            return instr;
+        }
+        public static string getINSTName(string INSTNO)
+        {
+            string strRet = string.Empty;
+            try
+            {
+                MysqlDBA<INSTBase> mysqlDBA_AttrBase = new MysqlDBA<INSTBase>(FunctionController.CONNSTR);
+                INSTBase baseattr = new INSTBase();
+                baseattr.INSTNO = INSTNO;
+                List<INSTBase> objLst = (List<INSTBase>)mysqlDBA_AttrBase.getDataList(baseattr);
+                if (objLst.Count > 0)
+                {
+                    strRet = objLst[0].INSTName;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strRet;
+        }
         public static string convertUDT2ROCDateFormat(string dateIn)
         {
             if (string.IsNullOrEmpty(dateIn))

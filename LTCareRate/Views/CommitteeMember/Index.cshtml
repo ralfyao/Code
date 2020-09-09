@@ -1,10 +1,10 @@
-﻿
+﻿@using LTCareRate.Models.DataModel
+@using LTCareRate.Utility
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
+@model LTCareRate.Models.ViewModel.CommitteeMember
 <div class="row justify-content-lg-between justify-content-xx-center">
     <div class="col-xl-3 col-lg-3 col-md-11 pr-xl-5 pr-lg-0 mb-4">
         <div class="row justify-content-md-between justify-content-xx-center">
@@ -14,18 +14,53 @@
         <div class="gw page-list mb-4">
             <h3 class="font-weight-bold">委員評鑑作業</h3>
         </div>
-        <form action="" method="post" class="gw process-form">
-            <div class="gw border bg-light py-5 px-lg-5 px-md-4 px-xx-3">
-                <div class="gw">
-                    <div class="gw pb-3">
-                        <h5 class="font-weight-bold mb-0 text-teal">評鑑機構資料</h5>
-                        <hr class="mt-2 mb-0">
-                    </div><!--12-->
-                    <div class="gw mb-4">
-
+        <div class="gw py-4 px-lg-5 px-md-4 px-xx-3 py-lg-5 py-xx-4 border  bg-light">
+            <form action="" method="post" class="gw process-form">
+                <fieldset class="pb-2">
+                    <div class="table-wrap pb-0">
+                        <div class="gw pb-3">
+                            <h5 class="font-weight-bold mb-0 text-teal">評鑑機構資料</h5>
+                            <hr class="mt-2 mb-0">
+                        </div><!--12-->
+                        <div class="gw mb-4">
+                            <table class="table table-bordered table-striped mb-0 table-hover">
+                                <thead class="text-center">
+                                    <tr class="font-weight-bold">
+                                        <th>評鑑日期</th>
+                                        <th>評鑑時段</th>
+                                        <th>機構代號</th>
+                                        <th>機構名稱</th>
+                                        <th>評鑑報表</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                @{ PagedList.IPagedList<CommINSTYear> instList = Model.INSTList;}
+                                @foreach (CommINSTYear baseComm in instList)
+                                {
+                                    <tr>
+                                        <td>@Utility.convertUDT2ROCDateFormat(baseComm.EvalDate)</td>
+                                        <td>@Utility.getEvalPeriod(baseComm.EvalPeriod)</td>
+                                        <td>@baseComm.INSTNO</td>
+                                        <td>@Utility.getINSTName(baseComm.INSTNO)</td>
+                                        <td>
+                                            <a href="javascript:void(0)" onclick="window.open('@Url.Action("BasicData", "Report", new { accountNo=baseComm.INSTNO })', '', 'width=1600,height=1200');">
+                                                <img src="~/images/BasicData.png" width="30" height="30" title="基本資料" />
+                                            </a>
+                                            <a href="javascript:void(0)" onclick="window.open('@Url.Action("Index_Blank", "SelfRate", new { INSTNO=baseComm.INSTNO, INSTName = Utility.getINSTName(baseComm.INSTNO) })', '', 'width=1600,height=1200');">
+                                                <img src="~/images/SelfRate.png" width="30" height="30" title="自評表" />
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                            <div class="pager">
+                                @Html.Pager(Model.INSTList.PageSize, Model.INSTList.PageNumber, Model.INSTList.TotalItemCount)
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </form>
+                </fieldset>
+            </form>
+        </div>
     </div>
 </div>

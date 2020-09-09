@@ -1,4 +1,5 @@
-﻿using PagedList;
+﻿using LTCareRate.Models.DataModel;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace LTCareRate.Models.ViewModel
 {
     public class CommitteeMember
     {
-        public IPagedList INSTList { get; set; }
+        public IPagedList<CommINSTYear> INSTList { get; set; }
     }
 }
