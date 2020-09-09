@@ -182,11 +182,11 @@
                                     <li id="query" class="nav-item active">
                                         @Html.ActionLink("評鑑單位作業", "Index", "Function", null, new { @class = "nav-link" })
                                     </li>
-                                    <li id="report" class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" id="navbar-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#0">相關報表</a>
-                                        <div class="dropdown-menu" aria-labelledby="navbar-2">
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="window.open('@Url.Action("BasicData", "Report", new { accountNo = Session["INSTNO"] })', '', 'width=1500,height=800');">基本資料表</a>
-                                        </div>
+                                    <li id="report" class="nav-item">
+                                        @*<a class="nav-link dropdown-toggle" id="navbar-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#0">相關報表</a>
+                                        <div class="dropdown-menu" aria-labelledby="navbar-2">*@
+                                            <a class="nav-link" href="javascript:void(0)" onclick="window.open('@Url.Action("BasicData", "Report", new { accountNo = Session["INSTNO"] })', '', 'width=1500,height=800');">基本資料表</a>
+                                        @*</div>*@
                                     </li>
                                 }
                                 if (accountBase.AccountType == "2")//委員

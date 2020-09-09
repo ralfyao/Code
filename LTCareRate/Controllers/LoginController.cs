@@ -63,33 +63,36 @@ namespace LTCareRate.Controllers
                     bool userRole = false;
                     accountBasesList.ForEach(o =>
                     {
-                        if (o.AccountNo == account && o.AcntPwd == password)
+                        if (o.AccountNo == account)
                         {
-                            verifyPasswd = true;
-                            Session["INSTNO"] = o.AcntTypeNo;
-                            Session["AccountNo"] = account;
-                            Session["AccountName"] = o.AcoountName;
-                            Session["AccountBase"] = o;
-                            roleCodeList.ForEach(t =>
+                            if (o.AcntPwd == password)
                             {
-                                if (o.AccountType.Trim() == t.CodeValue.Trim())
+                                verifyPasswd = true;
+                                Session["INSTNO"] = o.AcntTypeNo;
+                                Session["AccountNo"] = account;
+                                Session["AccountName"] = o.AcoountName;
+                                Session["AccountBase"] = o;
+                                roleCodeList.ForEach(t =>
                                 {
-                                    userRole = true;
-                                    Session["userRole"] = o.AccountType;
-                                }
-                            });
+                                    if (o.AccountType.Trim() == t.CodeValue.Trim())
+                                    {
+                                        userRole = true;
+                                        Session["userRole"] = o.AccountType;
+                                    }
+                                });
+                            }
                         }
                     });
-                    if (!userRole)
-                    {
-                        TempData["action"] = "query";
-                        TempData["error"] = "帳號：" + account + "未設系統定角色!";
-                        return RedirectToAction("Index", "Login", null);
-                    }
                     if (!verifyPasswd)
                     {
                         TempData["action"] = "query";
                         TempData["error"] = "帳號：" + account + "密碼錯誤!";
+                        return RedirectToAction("Index", "Login", null);
+                    }
+                    if (!userRole)
+                    {
+                        TempData["action"] = "query";
+                        TempData["error"] = "帳號：" + account + "未設系統定角色!";
                         return RedirectToAction("Index", "Login", null);
                     }
                 }

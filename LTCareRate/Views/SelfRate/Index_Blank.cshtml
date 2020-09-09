@@ -70,7 +70,7 @@
                             <tbody>
                                 @foreach (ScoreItem scoreItem in scoreItems)
                                 {
-                                    if (!scoreItem.ItemNo.StartsWith("5"))//5開頭的
+                                    if (!scoreItem.ItemNo.StartsWith("5"))//5開頭的結構
                                     {
                                         foreach (ScoreItem scoreItemChild in scoreItem.ChildItems)
                                         {
