@@ -11,6 +11,27 @@ namespace LTCareRate.Models.DataModel
 {
     public class ScoreItem
     {
+        public static List<ScoreItem> SCORE_ITEMS = getAllScoreItems();
+
+        private static List<ScoreItem> getAllScoreItems()
+        {
+            if (SCORE_ITEMS != null)
+            {
+                return SCORE_ITEMS;
+            }
+            List<ScoreItem> retObj = new List<ScoreItem>();
+            try
+            {
+                MysqlDBA<ScoreItem> dba = new MysqlDBA<ScoreItem>(FunctionController.CONNSTR);
+                retObj = (List<ScoreItem>)dba.getAllDataList(new ScoreItem());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return retObj;
+        }
+
         [Key]
         public string EvalYear { get; set; }
         [Key]
@@ -25,33 +46,20 @@ namespace LTCareRate.Models.DataModel
         public string IsFocus { get; set; }
         public List<ScoreItem> ChildItems { get; set; } = new List<ScoreItem>();
 
-        public void getChildItem(MysqlDBA<ScoreItem> mysqlDBA, List<InstScoreTable> instScoreTables, string INSTNO)
+        public void getChildItem(string INSTNO, string itemNo)
         {
             try
             {
                 //MysqlDBA<ScoreItem> mysqlDBA = new MysqlDBA<ScoreItem>(FunctionController.CONNSTR);
-                DataSet ds = mysqlDBA.getDataSet(string.Format("SELECT * FROM ScoreItem WHERE ItemParentNo='{0}'", ItemNo));
-                if (ds.Tables[0].Rows.Count > 0)
+                var ds = from s in SCORE_ITEMS  //mysqlDBA.getDataSet(string.Format("SELECT * FROM ScoreItem WHERE ItemParentNo='{0}'", ItemNo));
+                         where s.ItemParentNo == itemNo
+                         select s;
+                if (ds.Count() > 0)
                 {
                     ChildItems = new List<ScoreItem>();
-                    foreach (DataRow row in ds.Tables[0].Rows)
+                    foreach (ScoreItem item in ds.ToList())
                     {
-                        ScoreItem item = new ScoreItem();
-                        item.EvalYear = row["EvalYear"].ToString();
-                        item.EvalType = row["EvalType"].ToString();
-                        item.ItemNo = row["ItemNo"].ToString();
-                        item.ItemParentNo = row["ItemParentNo"].ToString();
-                        item.ItemScore = row["ItemScore"].ToString();
-                        item.ItemDesc = row["ItemDesc"].ToString();
-                        item.ItemGrade = row["ItemGrade"].ToString();
-                        item.CreateDate = row["CreateDate"].ToString();
-                        item.IsFocus = row["IsFocus"].ToString();
-                        List<InstScoreTable> instScoreList = Utility.Utility.getInstScore(INSTNO, item.ItemNo, item.EvalYear);
-                        if (instScoreList.Count > 0)
-                        {
-                            instScoreTables.Add(instScoreList[0]);
-                        }
-                        item.getChildItem(mysqlDBA, instScoreTables, INSTNO);
+                        item.getChildItem(INSTNO, item.ItemNo);
                         ChildItems.Add(item);
                     }
                 }

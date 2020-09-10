@@ -30,7 +30,7 @@ namespace LTCareRate.Controllers
                 //MysqlDBA<InstScoreTable> mysqlDBAInstScoreTable = new MysqlDBA<InstScoreTable>(FunctionController.CONNSTR);
                 List<ScoreItem> lstScoreItem = new List<ScoreItem>();
                 DataSet scoreItemsdateSet = mysqlDBA.getDataSet(string.Format("SELECT * FROM ScoreItem WHERE ItemParentNo='-1'"));
-                List<InstScoreTable> instScoreTables = new List<InstScoreTable>();
+                List<InstScoreTable> instScoreTables = Utility.Utility.getInstScore(Session["INSTNO"].ToString(), (DateTime.Now.Year - 1911).ToString());
                 foreach (DataRow scoreItem in scoreItemsdateSet.Tables[0].Rows)
                 {
                     ScoreItem score_Item = new ScoreItem();
@@ -42,15 +42,7 @@ namespace LTCareRate.Controllers
                     score_Item.EvalYear = scoreItem["EvalYear"].ToString();
                     score_Item.EvalType = scoreItem["EvalType"].ToString();
                     score_Item.CreateDate = scoreItem["CreateDate"].ToString();
-                    if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
-                    {
-                        //Log.Error(ex + ex.StackTrace);
-                        TempData["SessionExipred"] = "true";
-                        //TempData["error"] = ex + ex.StackTrace;
-                        //tran.Rollback();
-                        return RedirectToAction("Index", "Login", null);
-                    }
-                    score_Item.getChildItem(mysqlDBA, instScoreTables, Session["INSTNO"].ToString());
+                    score_Item.getChildItem(Session["INSTNO"].ToString(), score_Item.ItemNo);
                     lstScoreItem.Add(score_Item);
                     if (Session["INSTNO"] == null || string.IsNullOrEmpty(Session["INSTNO"].ToString()))
                     {
@@ -125,7 +117,7 @@ namespace LTCareRate.Controllers
                 MysqlDBA<ScoreItem> mysqlDBA = new MysqlDBA<ScoreItem>(FunctionController.CONNSTR);
                 List<ScoreItem> lstScoreItem = new List<ScoreItem>();
                 DataSet scoreItemsdateSet = mysqlDBA.getDataSet(string.Format("SELECT * FROM ScoreItem WHERE ItemParentNo='-1'"));
-                List<InstScoreTable> instScoreTables = new List<InstScoreTable>();
+                List<InstScoreTable> instScoreTables = Utility.Utility.getInstScore(Session["INSTNO"].ToString(), (DateTime.Now.Year - 1911).ToString());
                 foreach (DataRow scoreItem in scoreItemsdateSet.Tables[0].Rows)
                 {
                     ScoreItem score_Item = new ScoreItem();
@@ -137,7 +129,7 @@ namespace LTCareRate.Controllers
                     score_Item.EvalYear = scoreItem["EvalYear"].ToString();
                     score_Item.EvalType = scoreItem["EvalType"].ToString();
                     score_Item.CreateDate = scoreItem["CreateDate"].ToString();
-                    score_Item.getChildItem(mysqlDBA, instScoreTables, INSTNO);
+                    score_Item.getChildItem(INSTNO, score_Item.ItemNo);
                     lstScoreItem.Add(score_Item);
                     if (Session["INSTNO"] == null || string.IsNullOrEmpty(INSTNO))
                     {

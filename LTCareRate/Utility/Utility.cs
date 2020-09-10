@@ -357,7 +357,35 @@ namespace LTCareRate.Utility
             return cityCode;
         }
 
-        internal static List<InstScoreTable> getInstScore(string INSTNO, string itemNo, string evalYear)
+        public static List<InstScoreTable> getInstScore(string INSTNO, string evalYear)
+        {
+            List<InstScoreTable> listData = new List<InstScoreTable>();
+            try
+            {
+                MysqlDBA<InstScoreTable> dbaHRAlloc = new MysqlDBA<InstScoreTable>(FunctionController.CONNSTR);
+                DataSet ds = dbaHRAlloc.getDataSet(string.Format("SELECT * FROM InstScoreTable WHERE INSTNO='{0}' AND EvalYear='{1}'", INSTNO, evalYear));
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    InstScoreTable data = new InstScoreTable();
+                    data.EvalYear = row["EvalYear"].ToString();
+                    data.INSTNO = row["INSTNO"].ToString();
+                    data.ItemNo = row["ItemNo"].ToString();
+                    data.SelfScore = row["SelfScore"].ToString();
+                    data.EvalScore = row["EvalScore"].ToString();
+                    data.EvalDesc = row["EvalDesc"].ToString();
+                    data.EvalDate = row["EvalDate"].ToString();
+                    data.SelfDate = row["SelfDate"].ToString();
+                    listData.Add(data);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return listData;
+        }
+
+        public static List<InstScoreTable> getInstScore(string INSTNO, string itemNo, string evalYear)
         {
             List<InstScoreTable> listData = new List<InstScoreTable>();
             try

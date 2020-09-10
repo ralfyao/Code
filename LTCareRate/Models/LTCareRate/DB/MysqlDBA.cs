@@ -25,8 +25,10 @@ namespace LTCareRate.Models.LTCareRate.DB
         {
             transaction = tran;
         }
-        public MysqlDBA(string connectionString)
+        public MysqlDBA(string connectionString = "")
         {
+            if (connectionString == "")
+                connectionString = FunctionController.CONNSTR;
             connString = connectionString;
             XmlConfigurator.Configure(new System.IO.FileInfo("./log4net.config"));
             int retCode = connect();
@@ -105,6 +107,20 @@ namespace LTCareRate.Models.LTCareRate.DB
             return retCode;
         }
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
+
+        internal void close()
+        {
+            try
+            {
+                if (sqlConnection != null)
+                    sqlConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public IEnumerable<T> getAllDataList(T t)
         {
             try
@@ -112,7 +128,11 @@ namespace LTCareRate.Models.LTCareRate.DB
                 string strSQL = $"SELECT * FROM {t.GetType().Name} WHERE 1=1 ";
                 log.Debug(strSQL);
                 if (transaction == null)
-                    return sqlConnection.Query<T>(strSQL);
+                {
+                    IEnumerable<T> ret = sqlConnection.Query<T>(strSQL);
+                    sqlConnection.Close();
+                    return ret;
+                }
                 else
                     return sqlConnection.Query<T>(strSQL, null, transaction);
                 //return sqlConnection.Query<T>(strSQL);
@@ -157,7 +177,9 @@ namespace LTCareRate.Models.LTCareRate.DB
                 log.Debug(strSQL);
                 if (transaction == null)
                 {
-                    return sqlConnection.Query<T>(strSQL);
+                    IEnumerable<T> ret = sqlConnection.Query<T>(strSQL);
+                    sqlConnection.Close();
+                    return ret;
                 }
                 else
                 {
@@ -223,6 +245,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                 }
                 cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
             }
             catch (Exception ex)
             {
@@ -270,6 +293,10 @@ namespace LTCareRate.Models.LTCareRate.DB
             {
                 log.Debug(strSQL);
                 MySqlCommand cmd = new MySqlCommand(strSQL);
+                if (sqlConnection == null)
+                {
+                    connect();
+                }
                 cmd.Connection = sqlConnection;
                 if (tran != null)
                 {
@@ -277,6 +304,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                 }
                 MySqlDataAdapter mySqlDataAdapter = new MySqlDataAdapter(cmd);
                 mySqlDataAdapter.Fill(ds);
+                sqlConnection.Close();
             }
             catch (Exception ex)
             {
@@ -312,7 +340,11 @@ namespace LTCareRate.Models.LTCareRate.DB
                 strSQL += WhereQuery.ToString();
                 log.Debug(strSQL);
                 if (transaction == null)
-                    return sqlConnection.Query<T>(strSQL);
+                {
+                    IEnumerable<T> retObj = sqlConnection.Query<T>(strSQL);
+                    sqlConnection.Close();
+                    return retObj;
+                }
                 else
                     return sqlConnection.Query<T>(strSQL, null, transaction);
             }
@@ -349,7 +381,11 @@ namespace LTCareRate.Models.LTCareRate.DB
                 strSQL += WhereQuery.ToString();
                 log.Debug(strSQL);
                 if (transaction == null)
-                    return sqlConnection.Query<T>(strSQL);
+                {
+                    IEnumerable<T> retObj = sqlConnection.Query<T>(strSQL);
+                    sqlConnection.Close();
+                    return retObj;
+                }
                 else
                     return sqlConnection.Query<T>(strSQL, null, transaction);
             }
@@ -382,7 +418,11 @@ namespace LTCareRate.Models.LTCareRate.DB
                 strSQL += WhereQuery.ToString();
                 log.Debug(strSQL);
                 if (transaction == null)
-                    return sqlConnection.Query<T>(strSQL);
+                {
+                    IEnumerable<T> ret = sqlConnection.Query<T>(strSQL);
+                    sqlConnection.Close();
+                    return ret;
+                }
                 else
                     return sqlConnection.Query<T>(strSQL, null, transaction);
             }
@@ -443,6 +483,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                     if (transaction == null)
                     {
                         sqlConnection.Execute(insertQuery, t);
+                        sqlConnection.Close();
                     }
                     else
                     {
@@ -570,7 +611,12 @@ namespace LTCareRate.Models.LTCareRate.DB
                 log.Debug(strSQL);
                 if (transaction == null)
                 {
+                    if (sqlConnection == null)
+                    {
+                        connect();
+                    }
                     sqlConnection.Execute(strSQL, t);
+                    sqlConnection.Close();
                 }
                 else
                 {
@@ -599,6 +645,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                     if (transaction == null)
                     {
                         sqlConnection.Execute(updateQuery, t);
+                        sqlConnection.Close();
                     }
                     else
                     {
@@ -608,6 +655,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                 else
                 {
                     sqlConnection = new MySqlConnector.MySqlConnection(connString);
+                    sqlConnection.Open();
                     //cn.Open();
                     Update(t);
                 }

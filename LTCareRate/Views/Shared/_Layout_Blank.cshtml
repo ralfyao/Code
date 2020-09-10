@@ -24,8 +24,46 @@
     <script src="https://cdn.bootcss.com/jspdf/1.3.5/jspdf.min.js"></script>
     <script src="https://cdn.bootcss.com/jspdf/1.3.5/jspdf.debug.js"></script>
     <script src="https://cdn.bootcss.com/jspdf-autotable/3.0.0-alpha.1/jspdf.plugin.autotable.min.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jQuery.blockui.js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-166248697-4');
+    </script>
     <style type="text/css">
-        .html2canvas-container { width: 2000px !important; height: 500px !important; }
+        .html2canvas-container {
+            width: 2000px !important;
+            height: 500px !important;
+        }
+        /* Start by setting display:none to make this hidden.
+           Then we position it in relation to the viewport window
+           with position:fixed. Width, height, top and left speak
+           for themselves. Background we set to 80% white with
+           our animation centered, and no-repeating */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba( 255, 255, 255, .8 ) url('../../images/ajax-loader.gif') 50% 50% no-repeat;
+        }
+
+        /* When the body has the loading class, we turn
+           the scrollbar off with overflow:hidden */
+        body.loading .modal {
+            overflow: hidden;
+        }
+
+        /* Anytime the body has the loading class, our
+           modal element will be visible */
+        body.loading .modal {
+            display: block;
+        }
     </style>
     <script type="text/javascript">
         function downloadPDF() {
@@ -35,11 +73,20 @@
             //};
             //var doc = new jsPDF('p', 'pt', 'a4');
             //alert(document.body.clientHeight);
-            window.scrollTo(0,0);
+            //$body = $("body");
+            //$body.addClass("loading");
+            //$.blockUI({
+            //    message: '<table><tr><td valign="middle" style="height:50px" class="main"><img src="../../images/ajax-loader.gif" /></td></tr></table>',
+            //    css: {
+            //    width: '250px',
+            //    height: '350px'
+            //    }
+            //});
+            window.scrollTo(0, 0);
             html2canvas(document.body, { scrollX: 0, scrollY: 0 }).then(canvas => {
                 var imgData = canvas.toDataURL('image/png');
-                var imgWidth = 550; 
-                var pageHeight = 750;  
+                var imgWidth = 500;
+                var pageHeight = 800;
                 var imgHeight = canvas.height * imgWidth / canvas.width;
                 var heightLeft = imgHeight;
                 var doc = new jsPDF('p', 'pt', 'a4');
@@ -60,6 +107,7 @@
                 //doc.save('test.pdf');
             });
             window.scrollTo(0, document.body.scrollWidth || document.documentElement.scrollHeight);
+            //$.unblockUI();
             //html2canvas(document.body).then(canvas => {
             //    saveAs(canvas.toDataURL("./images"), 'canvas.png');
             //});
@@ -71,9 +119,9 @@
             //    pagesplit: true, //設置是否自動分頁
             //    "background": '#ffffff'   //如果導出的pdf為黑色背景，需要將導出的html模塊內容背景 設置成白色。
             //};
-            //var printHtml = $('#page').get(0);   // 頁面某一個div裏面的內容，通過id獲取div內容   
-            //    pdf.addHTML(printHtml, 15, 15, options, function () { 
-            //    pdf.save('htmltopdf_'+random+'.pdf'); 
+            //var printHtml = $('#page').get(0);   // 頁面某一個div裏面的內容，通過id獲取div內容
+            //    pdf.addHTML(printHtml, 15, 15, options, function () {
+            //    pdf.save('htmltopdf_'+random+'.pdf');
             //    parent.closeLoading();
             //});
            ////html2canvas($("#print"), {
@@ -157,7 +205,7 @@
             </header>
         </div>
         <div class="header-menu gw bg-primary">
-            
+
         </div>
         <main class="gw mh-70 bg-white">
             <article class="gw py-5">
@@ -170,5 +218,6 @@
     <script src="Scripts/jquery.js"></script>
     <script src="Scripts/bootstrap.js"></script>
     <script src="Scripts/use.min.js"></script>
+    <div class="modal"><!-- Place at bottom of page --></div>
 </body>
 </html>

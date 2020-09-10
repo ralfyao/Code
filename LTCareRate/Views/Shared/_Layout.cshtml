@@ -28,6 +28,12 @@
     <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5 76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://cdn.bootcss.com/jspdf-autotable/3.0.0-alpha.1/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-166248697-4');
+    </script>
     <style>
         .k-grid .k-state-selected {
             background-color: #C4FAEC;
@@ -184,8 +190,8 @@
                                     </li>
                                     <li id="report" class="nav-item">
                                         @*<a class="nav-link dropdown-toggle" id="navbar-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#0">相關報表</a>
-                                        <div class="dropdown-menu" aria-labelledby="navbar-2">*@
-                                            <a class="nav-link" href="javascript:void(0)" onclick="window.open('@Url.Action("BasicData", "Report", new { accountNo = Session["INSTNO"] })', '', 'width=1500,height=800');">基本資料表</a>
+                                            <div class="dropdown-menu" aria-labelledby="navbar-2">*@
+                                        <a class="nav-link" href="javascript:void(0)" onclick="window.open('@Url.Action("BasicData", "Report", new { accountNo = Session["INSTNO"] })', '', 'width=1500,height=800');">基本資料表</a>
                                         @*</div>*@
                                     </li>
                                 }
@@ -272,8 +278,10 @@
             </div>
         </footer>
     </div>
-
-    <input type="text" id="date1" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166248697-4"></script>
+    
+    @*<input type="text" id="date1" />*@
     <script src="Scripts/jquery.js"></script>
     <script src="Scripts/bootstrap.js"></script>
     <script src="Scripts/use.min.js"></script>
