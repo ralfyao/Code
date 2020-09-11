@@ -52,6 +52,7 @@ namespace LTCareRate.Controllers
             {
                 
                 MysqlDBA<CaseSvrRec> mysqlDBA = new MysqlDBA<CaseSvrRec>(FunctionController.CONNSTR);
+                
                 CaseSvrRec eachObj = new CaseSvrRec();
                 if (file_input_list == null || file_input_list.ContentLength == 0)
                 {
@@ -65,7 +66,7 @@ namespace LTCareRate.Controllers
                     fileName = fileName.Split('.')[0] + DateTime.Now.ToString("yyyyMMddHHmmss") + "." + fileName.Split('.')[1];
                     var path = Path.Combine(Server.MapPath("~/FileUploads"), fileName);
                     file_input_list.SaveAs(path);
-
+                    Dictionary<string, string> chkCaseNo = new Dictionary<string, string>();
                     using (FileStream fileStream = System.IO.File.Open(path, FileMode.Open, FileAccess.Read))
                     {
                         using (IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fileStream))
@@ -79,30 +80,63 @@ namespace LTCareRate.Controllers
                                     UseHeaderRow = false
                                 }
                             });
+                            //result.Tables[0].DefaultView.Sort = result.Tables[0].Columns[0].ColumnName;
                             dataRow = result.Tables[0].Rows;
                             dataColumn = result.Tables[0].Columns;
                             string strCaseNo = string.Empty;
                             for (int i = 3; i < dataRow.Count; i++)
                             {
+                                try
+                                {
+                                    rowIndex = i;
+                                    colIndex = 0;
+                                    string caseNo = string.Empty;
+                                    string startDate = string.Empty;
+                                    string signDate = string.Empty;
+                                    string cfDate = string.Empty;
+                                    string aToBDate = string.Empty;
+                                    string firstSvrDate = string.Empty;
+                                    caseNo = result.Tables[0].Rows[i][colIndex].ToString(); colIndex++;
+                                    DateTime startDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    startDate = (startDateTime.Year + 1911) + "-" + startDateTime.Month.ToString("00") + "-" + startDateTime.Day.ToString("00");
+                                    DateTime signDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month.ToString("00") + "-" + signDateTime.Day.ToString("00");
+                                    DateTime cfDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month.ToString("00") + "-" + cfDateTime.Day.ToString("00");
+                                    DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
+                                    DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                    firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                }
+                                catch (Exception ex)
+                                {
+                                    TempData["error"] = "檔案格式錯誤，在第" + rowIndex + "列第" + colIndex + "欄";
+                                    return RedirectToAction("Index", "CaseListCount", null);
+                                }
                                 //檢查檔案內容案號
-                                if (strCaseNo == result.Tables[0].Rows[i][0].ToString())
+                                if (chkCaseNo.ContainsKey(result.Tables[0].Rows[i][0].ToString()))
                                 {
                                     TempData["error"] = "案號" + result.Tables[0].Rows[i][0].ToString() + "重複!";
                                     return RedirectToAction("Index", "CaseListCount", null);
                                 }
                                 else
                                 {
-                                    strCaseNo = result.Tables[0].Rows[i][0].ToString();
+                                    chkCaseNo.Add(result.Tables[0].Rows[i][0].ToString(), null);
                                 }
                                 //檢查資料庫案號
-                                eachObj = new CaseSvrRec();
-                                eachObj.CaseNo = result.Tables[0].Rows[i][0].ToString();
-                                if (new MysqlDBA<CaseSvrRec>(FunctionController.CONNSTR).getDataListNoKey(eachObj).Count() > 0)
-                                {
-                                    TempData["error"] = "案號" + result.Tables[0].Rows[i][0].ToString() + "重複!";
-                                    return RedirectToAction("Index", "CaseListCount", null);
-                                }
+                                //eachObj = new CaseSvrRec();
+                                //eachObj.CaseNo = result.Tables[0].Rows[i][0].ToString();
+                                //if (new MysqlDBA<CaseSvrRec>(FunctionController.CONNSTR).getDataListNoKey(eachObj).Count() > 0)
+                                //{
+                                //    TempData["error"] = "案號" + result.Tables[0].Rows[i][0].ToString() + "重複!";
+                                //    return RedirectToAction("Index", "CaseListCount", null);
+                                //}
                             }
+                            mysqlDBA.Delete(new CaseSvrRec()
+                            {
+                                INSTNO = Session["INSTNO"].ToString(),
+                                Year = (DateTime.Now.Year - 1911).ToString()
+                            });
                             for (int i = 3; i < dataRow.Count; i++)
                             {
                                 rowIndex = i;
@@ -229,6 +263,36 @@ namespace LTCareRate.Controllers
                             });
                             dataRow = result.Tables[0].Rows;
                             dataColumn = result.Tables[0].Columns;
+                            for (int i = 1; i < dataRow.Count; i++)
+                            {
+                                caseSvr = new CaseSvr();
+                                int j = 1;
+                                try
+                                {
+                                    caseSvr.OldCaseNum = int.Parse(result.Tables[0].Rows[i][j].ToString()); j++;//2020-09-01 OldCaseNum不使用
+                                    //2020-09-01 Svr01CaseRenum --> 新案複評量, Svr02CaseRenum --> A單位計畫複評量
+                                    //caseSvr.Svr01CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    //caseSvr.Svr02CaseRenum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    //2020-09-01 Svr01CaseRenum --> 新案複評量, Svr02CaseRenum --> A單位計畫複評量
+                                    caseSvr.TraceCaseTotal = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    caseSvr.MultSvrCaseNum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    caseSvr.SelfReferral = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    caseSvr.FullPeoNum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    caseSvr.PartPeoNum = int.Parse(convertNullNumericString(result.Tables[0].Rows[i][j].ToString())); j++;
+                                    //}
+                                    caseSvr.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
+                                }
+                                catch (FormatException ex)
+                                {
+                                    TempData["error"] = "數字格式錯誤!在第" + i + "列第" + j + "行";
+                                    return RedirectToAction("Index", "CaseListCount", null);
+                                }
+                            }
+                            mysqlDBA.Delete(new CaseSvr()
+                            {
+                                INSTNO = Session["INSTNO"].ToString(),
+                                Year = (DateTime.Now.Year - 1911).ToString()
+                            });
                             for (int i = 1; i < dataRow.Count; i++)
                             {
                                 caseSvr = new CaseSvr();

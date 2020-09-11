@@ -598,7 +598,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                 var attribute = Attribute.GetCustomAttribute(property, typeof(KeyAttribute))
                     as KeyAttribute;
 
-                if (attribute != null) // This property has a KeyAttribute
+                if (attribute != null && property.GetValue(t) != null) // This property has a KeyAttribute
                 {
                     tmpStr = property.GetValue(t).ToString();
                     WhereQuery.Append($"{property.Name}='{tmpStr}' and ");

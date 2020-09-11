@@ -53,7 +53,7 @@
                                 <li class="col-xl-1 col-lg-2 col-md-2 col-sm-3 col-xx-4">
                                     <div class="tables-row">
                                         <span>附件</span>
-                                        <div>@obj.Attachs</div>
+                                        <div>@Html.ActionLink(obj.Attachs, "Attachment", "DownLoad", new { file=obj.Attachs}, null) </div>
                                     </div><!--tables-row-->
                                 </li><!--col2-->
                                 <li class="col-xl-2 col-lg-3 col-md-4 col-sm-5 col-xx-8">
