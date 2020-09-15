@@ -438,7 +438,7 @@ namespace LTCareRate.Models.LTCareRate.DB
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public int InsertOrUpdate(T t)
+        public int InsertOrUpdate(T t, bool emptyStringNull = false)
         {
             int updateOrInsertCnt = 0;
             try
@@ -452,12 +452,12 @@ namespace LTCareRate.Models.LTCareRate.DB
                 }
                 if (dataCnt == 0)
                 {
-                    Insert(t);
+                    Insert(t, emptyStringNull);
                     //InsertMemory(t);
                 }
                 else
                 {
-                    Update(t);
+                    Update(t, emptyStringNull);
                     //UpdateMemory(t);
                 }
             }
@@ -472,11 +472,13 @@ namespace LTCareRate.Models.LTCareRate.DB
         /// Dapper ORM Insert function
         /// </summary>
         /// <param name="t"></param>
-        public void Insert(T t)
+        public void Insert(T t, bool emptyStringNull = false)
         {
             var insertQuery = GenerateInsertQuery(t).Replace("上午", "").Replace("下午", "");
             try
             {
+                if (emptyStringNull)
+                    insertQuery = insertQuery.Replace("''", "null");
                 if (!string.IsNullOrEmpty(connString) && sqlConnection != null && sqlConnection.State == System.Data.ConnectionState.Open)
                 {
                     log.Debug(insertQuery);
@@ -495,7 +497,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                     sqlConnection = new MySqlConnector.MySqlConnection(connString);
                     sqlConnection.Open();
                     //cn.Open();
-                    Insert(t);
+                    Insert(t, emptyStringNull);
                 }
             }
             catch (Exception ex)
@@ -634,11 +636,13 @@ namespace LTCareRate.Models.LTCareRate.DB
         /// Dapper ORM Update function
         /// </summary>
         /// <param name="t"></param>
-        public void Update(T t)
+        public void Update(T t, bool emptyStringNull = false)
         {
             try
             {
                 var updateQuery = GenerateUpdateQuery(t);
+                if (emptyStringNull)
+                    updateQuery = updateQuery.Replace("''", "null");
                 if (!string.IsNullOrEmpty(connString) && sqlConnection != null && sqlConnection.State == System.Data.ConnectionState.Open)
                 {
                     log.Debug(updateQuery);
@@ -657,7 +661,7 @@ namespace LTCareRate.Models.LTCareRate.DB
                     sqlConnection = new MySqlConnector.MySqlConnection(connString);
                     sqlConnection.Open();
                     //cn.Open();
-                    Update(t);
+                    Update(t, emptyStringNull);
                 }
             }
             catch (Exception ex)

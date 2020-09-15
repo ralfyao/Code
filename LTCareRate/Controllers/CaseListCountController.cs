@@ -103,10 +103,16 @@ namespace LTCareRate.Controllers
                                     signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month.ToString("00") + "-" + signDateTime.Day.ToString("00");
                                     DateTime cfDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
                                     cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month.ToString("00") + "-" + cfDateTime.Day.ToString("00");
-                                    DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                    aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
-                                    DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                    firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                    if (!string.IsNullOrEmpty(result.Tables[0].Rows[i][colIndex].ToString()))
+                                    {
+                                        DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                        aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
+                                    }
+                                    if (!string.IsNullOrEmpty(result.Tables[0].Rows[i][colIndex].ToString()))
+                                    {
+                                        DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                        firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -162,10 +168,16 @@ namespace LTCareRate.Controllers
                                     signDate = (signDateTime.Year + 1911) + "-" + signDateTime.Month.ToString("00") + "-" + signDateTime.Day.ToString("00");
                                     DateTime cfDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
                                     cfDate = (cfDateTime.Year + 1911) + "-" + cfDateTime.Month.ToString("00") + "-" + cfDateTime.Day.ToString("00");
-                                    DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                    aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
-                                    DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
-                                    firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                    if (!string.IsNullOrEmpty(result.Tables[0].Rows[i][colIndex].ToString()))
+                                    {
+                                        DateTime aToBDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                        aToBDate = (aToBDateTime.Year + 1911) + "-" + aToBDateTime.Month.ToString("00") + "-" + aToBDateTime.Day.ToString("00");
+                                    }
+                                    if (!string.IsNullOrEmpty(result.Tables[0].Rows[i][colIndex].ToString()))
+                                    {
+                                        DateTime firstSvrDateTime = DateTime.Parse(result.Tables[0].Rows[i][colIndex].ToString()); colIndex++;
+                                        firstSvrDate = (firstSvrDateTime.Year + 1911) + "-" + firstSvrDateTime.Month.ToString("00") + "-" + firstSvrDateTime.Day.ToString("00");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -179,10 +191,12 @@ namespace LTCareRate.Controllers
                                 eachObj.StartDate = startDate;
                                 eachObj.SignDate = signDate;
                                 eachObj.CFDate = cfDate;
-                                eachObj.AToBDate = aToBDate;
-                                eachObj.FirstSvrDate = firstSvrDate;
+                                if (!string.IsNullOrEmpty(aToBDate))
+                                    eachObj.AToBDate = aToBDate;
+                                if (!string.IsNullOrEmpty(firstSvrDate))
+                                    eachObj.FirstSvrDate = firstSvrDate;
                                 eachObj.CreateDate = DateTime.Now.ToString("yyyy-MM-dd");
-                                mysqlDBA.InsertOrUpdate(eachObj);
+                                mysqlDBA.InsertOrUpdate(eachObj, true);
                             }
                         }
                     }
